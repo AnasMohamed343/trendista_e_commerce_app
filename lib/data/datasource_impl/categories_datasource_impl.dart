@@ -1,9 +1,12 @@
+import 'package:injectable/injectable.dart';
 import 'package:trendista_e_commerce/data/api_manager/api_manager.dart';
 import 'package:trendista_e_commerce/data/datasource_contract/categories_datasource.dart';
 import 'package:trendista_e_commerce/domain/entities/Category.dart';
 
+@Injectable(as: CategoriesDataSource)
 class CategoriesDataSourceImpl extends CategoriesDataSource {
   ApiManager apiManager;
+  @factoryMethod
   CategoriesDataSourceImpl({required this.apiManager});
   @override
   Future<List<Category>?> getCategories() async {

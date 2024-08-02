@@ -36,6 +36,12 @@ dependencies:
   # Use with the CupertinoIcons class for iOS style icons.
   cupertino_icons: ^1.0.6
   http: ^1.2.2
+  flutter_bloc: ^8.1.6
+  # add injectable to your dependencies
+  injectable:
+  # add get_it
+  get_it:
+  cached_network_image: ^3.4.0
 
 dev_dependencies:
   flutter_test:
@@ -47,6 +53,10 @@ dev_dependencies:
   # package. See that file for information about deactivating specific lint
   # rules and activating additional ones.
   flutter_lints: ^3.0.0
+  # add the generator to your dev_dependencies
+  injectable_generator:
+  # add build runner if not already added
+  build_runner:
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec
