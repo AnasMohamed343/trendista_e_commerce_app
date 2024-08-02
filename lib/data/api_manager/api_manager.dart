@@ -1,8 +1,11 @@
 import 'dart:convert';
 
 import 'package:http/http.dart' as http;
+import 'package:injectable/injectable.dart';
 import 'package:trendista_e_commerce/data/model/categories_response/CategoriesResponse.dart';
 
+@singleton
+@injectable
 class ApiManager {
   static const baseUrl = 'ecommerce.routemisr.com';
 
