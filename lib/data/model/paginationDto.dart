@@ -1,11 +1,11 @@
-class Metadata {
-  Metadata({
+class PaginationDto {
+  PaginationDto({
     this.currentPage,
     this.numberOfPages,
     this.limit,
   });
 
-  Metadata.fromJson(dynamic json) {
+  PaginationDto.fromJson(dynamic json) {
     currentPage = json['currentPage'];
     numberOfPages = json['numberOfPages'];
     limit = json['limit'];
@@ -13,12 +13,12 @@ class Metadata {
   int? currentPage;
   int? numberOfPages;
   int? limit;
-  Metadata copyWith({
+  PaginationDto copyWith({
     int? currentPage,
     int? numberOfPages,
     int? limit,
   }) =>
-      Metadata(
+      PaginationDto(
         currentPage: currentPage ?? this.currentPage,
         numberOfPages: numberOfPages ?? this.numberOfPages,
         limit: limit ?? this.limit,
