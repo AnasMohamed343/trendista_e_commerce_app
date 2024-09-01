@@ -3,6 +3,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:injectable/injectable.dart';
 import 'package:trendista_e_commerce/domain/entities/Product.dart';
 
 class ProductItemWidget extends StatelessWidget {
@@ -24,7 +25,7 @@ class ProductItemWidget extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Stack(
-              alignment: Alignment(0.9, -0.8),
+              alignment: Alignment(0.96, -0.9),
               //alignment: Alignment.topRight,
               children: [
                 CachedNetworkImage(
@@ -44,8 +45,8 @@ class ProductItemWidget extends StatelessWidget {
                   backgroundColor: Colors.white,
                   child: Image.asset(
                     'assets/icons/ic_fav.png',
-                    width: 19.w,
-                    height: 18.h,
+                    width: 20.w,
+                    height: 19.h,
                   ),
                 ),
               ],
@@ -72,35 +73,41 @@ class ProductItemWidget extends StatelessWidget {
                     style: TextStyle(color: Colors.black, fontSize: 15),
                   ),
                   SizedBox(
-                    height: 9.h,
+                    height: 7.h,
                   ),
                   Row(
                     children: [
-                      Text(
-                        'EGP ${product.price.toString()}' ?? '',
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
-                        style: TextStyle(fontSize: 14, color: Colors.black),
-                      ),
-                      SizedBox(
-                        width: 12.w,
-                      ),
                       Visibility(
                           visible: product.priceAfterDiscount !=
                               null, // if priceAfterDiscount != null => make it visible , else don't show it
                           child: Text(
-                            '${product.priceAfterDiscount.toString()} EGP',
+                            'EGP ${product.priceAfterDiscount.toString()}',
                             maxLines: 1,
                             overflow: TextOverflow.ellipsis,
-                            style: TextStyle(
-                                fontSize: 13,
-                                decoration: TextDecoration.lineThrough,
-                                color: Colors.blue),
+                            style: TextStyle(fontSize: 14, color: Colors.black),
                           )),
+                      SizedBox(
+                        width: product.priceAfterDiscount != null ? 11.w : 0,
+                      ),
+                      Text(
+                        '${product.price.toString()} EGP' ?? '',
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                        style: TextStyle(
+                            decorationColor: Colors.blue,
+                            fontSize:
+                                product.priceAfterDiscount != null ? 13 : 14,
+                            color: product.priceAfterDiscount != null
+                                ? Colors.blue
+                                : Colors.black,
+                            decoration: product.priceAfterDiscount != null
+                                ? TextDecoration.lineThrough
+                                : TextDecoration.none),
+                      ),
                     ],
                   ),
                   SizedBox(
-                    height: 9.h,
+                    height: 8.h,
                   ),
                   Row(
                     children: [

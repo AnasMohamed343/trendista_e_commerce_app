@@ -45,6 +45,9 @@ dependencies:
   flutter_screenutil: ^5.9.3
   google_fonts: ^6.2.1
   flutter_launcher_icons: ^0.13.1
+  dartz: ^0.10.1
+  fluttertoast: ^8.2.8
+  shared_preferences: ^2.2.3
 flutter_icons:
     image_path: "assets/images/app-logo.jpg"
     android: true

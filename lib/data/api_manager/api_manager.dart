@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:http/http.dart' as http;
 import 'package:injectable/injectable.dart';
+import 'package:trendista_e_commerce/data/model/auth_response/AuthResponse.dart';
 import 'package:trendista_e_commerce/data/model/brands_response/BrandsResponse.dart';
 import 'package:trendista_e_commerce/data/model/categories_response/CategoriesResponse.dart';
 import 'package:trendista_e_commerce/data/model/products_response/ProductsResponse.dart';
@@ -43,5 +44,33 @@ class ApiManager {
     var json = jsonDecode(response.body);
     ProductsResponse productsResponse = ProductsResponse.fromJson(json);
     return productsResponse;
+  }
+
+  Future<AuthResponse> register(
+      {required String name,
+      required String email,
+      required String mobileNumber,
+      required String password}) async {
+    var url = Uri.https(baseUrl, '/api/v1/auth/signup');
+    var response = await http.post(url, body: {
+      "name": name,
+      "email": email,
+      "password": password,
+      "rePassword": password,
+      "phone": mobileNumber,
+    });
+    var json = jsonDecode(response.body);
+    AuthResponse authResponse = AuthResponse.fromJson(json);
+    return authResponse;
+  }
+
+  Future<AuthResponse> login(
+      {required String email, required String password}) async {
+    var url = Uri.https(baseUrl, '/api/v1/auth/signin');
+    var response =
+        await http.post(url, body: {"email": email, "password": password});
+    var json = jsonDecode(response.body);
+    AuthResponse authResponse = AuthResponse.fromJson(json);
+    return authResponse;
   }
 }
