@@ -2,6 +2,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:injectable/injectable.dart';
 import 'package:trendista_e_commerce/domain/usecases/get_categories_usecase.dart';
 
+//import '../../../../../domain/entities/route_e-commerce/Category.dart';
 import '../../../../../domain/entities/Category.dart';
 
 @injectable

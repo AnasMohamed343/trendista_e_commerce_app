@@ -11,7 +11,7 @@ class SignInViewModel extends Cubit<SignInViewModelState> {
 
   signIn({required String email, required String password}) async {
     emit(LoadingState());
-    var response = await signInUseCase.Invoke(email: email, password: password);
+    var response = await signInUseCase.invoke(email: email, password: password);
     response.fold((response) {
       emit(SuccessState(authEntity: response));
     }, (error) {

@@ -1,9 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:lottie/lottie.dart';
 import 'package:trendista_e_commerce/di/di.dart';
-import 'package:trendista_e_commerce/domain/entities/Category.dart';
+import 'package:trendista_e_commerce/domain/entities/Product.dart';
+//import 'package:trendista_e_commerce/domain/entities/route_e-commerce/Category.dart';
 import 'package:trendista_e_commerce/presentation/ui/home/tabs/products_tab/products_tab_vm.dart';
 import 'package:trendista_e_commerce/presentation/ui/home/widgets/product_item_widget.dart';
+
+import 'package:trendista_e_commerce/domain/entities/Category.dart';
 
 class ProductsTab extends StatefulWidget {
   Category category;
@@ -13,19 +17,30 @@ class ProductsTab extends StatefulWidget {
   State<ProductsTab> createState() => _ProductsTabState();
 }
 
-class _ProductsTabState extends State<ProductsTab> {
+class _ProductsTabState extends State<ProductsTab>
+    with TickerProviderStateMixin {
+  late final AnimationController _controller;
   var viewModel = getIt<ProductsTabVM>();
 
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
+    _controller = AnimationController(vsync: this);
+    _controller.repeat(period: const Duration(seconds: 3));
     viewModel.initPage(widget.category);
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+        backgroundColor: Colors.white,
         appBar: AppBar(
           title: Text(widget.category.name ?? ''),
         ),
@@ -37,7 +52,14 @@ class _ProductsTabState extends State<ProductsTab> {
                 case LoadingState():
                   {
                     return Center(
-                      child: CircularProgressIndicator(),
+                      child: Lottie.network(
+                          'https://lottie.host/f45c9991-322a-4fe7-bf28-1b08fcb62e6c/xBEyXbOlwu.json',
+                          width: 240,
+                          height: 240,
+                          repeat: true,
+                          errorBuilder: (context, error, stackTrace) {
+                        return const Icon(Icons.error_outline);
+                      }, controller: _controller),
                     );
                   }
                 case ErrorState():
@@ -47,8 +69,10 @@ class _ProductsTabState extends State<ProductsTab> {
                         children: [
                           Expanded(child: Text(state.errorMessage ?? '')),
                           ElevatedButton(
-                            onPressed: () {},
-                            child: Text('Try Again'),
+                            onPressed: () {
+                              viewModel.initPage(widget.category);
+                            },
+                            child: const Text('Try Again'),
                           ),
                         ],
                       ),
@@ -58,13 +82,15 @@ class _ProductsTabState extends State<ProductsTab> {
                   {
                     return GridView.builder(
                       itemCount: state.products?.length,
-                      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                          childAspectRatio: 8 / 9.8,
-                          crossAxisCount: 2,
-                          mainAxisSpacing: 12),
+                      gridDelegate:
+                          const SliverGridDelegateWithFixedCrossAxisCount(
+                              childAspectRatio: 8 / 9.5,
+                              crossAxisCount: 2,
+                              mainAxisSpacing: 12),
                       itemBuilder: (context, index) {
                         return ProductItemWidget(
-                            product: state.products![index]);
+                          product: state.products?[index] ?? Product(),
+                        );
                       },
                     );
                   }

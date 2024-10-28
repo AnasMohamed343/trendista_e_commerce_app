@@ -4,12 +4,15 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:trendista_e_commerce/core/local/prefs_helper.dart';
+import 'package:trendista_e_commerce/core/styles.dart';
 import 'package:trendista_e_commerce/core/utils/email_validation.dart';
 import 'package:trendista_e_commerce/core/utils/routes_manager.dart';
 import 'package:trendista_e_commerce/di/di.dart';
 import 'package:trendista_e_commerce/presentation/ui/home/widgets/custom_buttom.dart';
 import 'package:trendista_e_commerce/presentation/ui/home/widgets/custom_text_form_field.dart';
 import 'package:trendista_e_commerce/presentation/ui/sign_up/sign_up_viewModel.dart';
+
+import '../../../constants.dart';
 
 class SignUpScreen extends StatefulWidget {
   @override
@@ -54,7 +57,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
     return BlocProvider(
       create: (context) => viewModel,
       child: Scaffold(
-        backgroundColor: Color(0xff004182),
+        backgroundColor: kSecondaryColor,
         body: Padding(
           padding: const EdgeInsets.only(right: 10, left: 10, top: 58),
           child: SingleChildScrollView(
@@ -145,7 +148,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                     bloc: viewModel,
                     builder: (context, state) {
                       if (state is LoadingState) {
-                        return Center(
+                        return const Center(
                             child: CircularProgressIndicator(
                           color: Colors.white,
                         ));
@@ -170,6 +173,8 @@ class _SignUpScreenState extends State<SignUpScreen> {
                         return;
                       }
                       if (state is SuccessState) {
+                        // PrefsHelper.setToken(
+                        //     value: state.token, key: token ?? '');
                         print(state.token);
                         PrefsHelper.setToken(state.token);
                         Fluttertoast.showToast(
@@ -192,10 +197,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                     },
                     child: Text(
                       "Already have an account? Login",
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontSize: 18,
-                      ),
+                      style: Styles.textStyle18.copyWith(color: Colors.white),
                       textAlign: TextAlign.center,
                     ),
                   ),

@@ -3,7 +3,9 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:trendista_e_commerce/constants.dart';
 import 'package:trendista_e_commerce/core/local/prefs_helper.dart';
+import 'package:trendista_e_commerce/core/styles.dart';
 import 'package:trendista_e_commerce/core/utils/routes_manager.dart';
 import 'package:trendista_e_commerce/di/di.dart';
 import 'package:trendista_e_commerce/presentation/ui/home/widgets/custom_buttom.dart';
@@ -45,7 +47,7 @@ class _SignInScreenState extends State<SignInScreen> {
     return BlocProvider(
       create: (context) => viewModel,
       child: Scaffold(
-        backgroundColor: Color(0xff004182),
+        backgroundColor: kPrimaryColor,
         body: Padding(
           padding: const EdgeInsets.only(right: 10, left: 10, top: 128),
           child: SingleChildScrollView(
@@ -71,20 +73,10 @@ class _SignInScreenState extends State<SignInScreen> {
                   ),
                   Text(
                     'Welcome Back To Trendista',
-                    style: TextStyle(
-                      fontWeight: FontWeight.w600,
-                      fontSize: 24.sp,
-                      color: Colors.white,
-                    ),
+                    style: Styles.textStyle24.copyWith(color: Colors.white),
                   ),
-                  Text(
-                    'Please sign in with your email',
-                    style: TextStyle(
-                      fontWeight: FontWeight.w300,
-                      fontSize: 16.sp,
-                      color: Colors.white,
-                    ),
-                  ),
+                  const Text('Please sign in with your email',
+                      style: Styles.textStyle16),
                   SizedBox(
                     height: 25.h,
                   ),
@@ -113,14 +105,11 @@ class _SignInScreenState extends State<SignInScreen> {
                       return null;
                     },
                   ),
-                  Padding(
-                    padding: const EdgeInsets.only(right: 9, bottom: 10),
+                  const Padding(
+                    padding: EdgeInsets.only(right: 9, bottom: 10),
                     child: Text(
                       'Forgot Password',
-                      style: TextStyle(
-                          color: Colors.white,
-                          fontSize: 16,
-                          fontWeight: FontWeight.w300),
+                      style: Styles.textStyle16,
                       textAlign: TextAlign.end,
                     ),
                   ),
@@ -128,7 +117,7 @@ class _SignInScreenState extends State<SignInScreen> {
                     bloc: viewModel,
                     builder: (context, state) {
                       if (state is LoadingState) {
-                        return Center(
+                        return const Center(
                             child: CircularProgressIndicator(
                           color: Colors.white,
                         ));
@@ -140,7 +129,7 @@ class _SignInScreenState extends State<SignInScreen> {
                         },
                       );
                     },
-                    listener: (context, state) {
+                    listener: (context, state) async {
                       if (state is ErrorState) {
                         Fluttertoast.showToast(
                             msg: state.errorMessage,
@@ -152,17 +141,32 @@ class _SignInScreenState extends State<SignInScreen> {
                             fontSize: 16.0);
                       }
                       if (state is SuccessState) {
-                        PrefsHelper.setToken(state.authEntity.token ?? '');
-                        Fluttertoast.showToast(
-                            msg: "Logged in Successfully",
-                            toastLength: Toast.LENGTH_SHORT,
-                            gravity: ToastGravity.CENTER,
-                            timeInSecForIosWeb: 1,
-                            backgroundColor: Colors.green,
-                            textColor: Colors.white,
-                            fontSize: 16.0);
-                        Navigator.pushReplacementNamed(
-                            context, RoutesManager.homeRouteName);
+                        // Wait for the token to be saved before proceeding
+                        // final bool tokenSaved = await PrefsHelper.setToken(
+                        //     state.authEntity.data?.token ?? '');
+                        final tokenSaved = PrefsHelper.getToken();
+                        if (tokenSaved != null) {
+                          Fluttertoast.showToast(
+                              msg: "Logged in Successfully",
+                              toastLength: Toast.LENGTH_SHORT,
+                              gravity: ToastGravity.CENTER,
+                              timeInSecForIosWeb: 1,
+                              backgroundColor: Colors.green,
+                              textColor: Colors.white,
+                              fontSize: 16.0);
+                          Navigator.pushReplacementNamed(
+                              context, RoutesManager.homeRouteName);
+                        } else {
+                          // Handle the token not being saved, if needed
+                          Fluttertoast.showToast(
+                              msg: "Failed to save token",
+                              toastLength: Toast.LENGTH_SHORT,
+                              gravity: ToastGravity.CENTER,
+                              timeInSecForIosWeb: 1,
+                              backgroundColor: Colors.red,
+                              textColor: Colors.white,
+                              fontSize: 16.0);
+                        }
                       }
                     },
                   ),
@@ -173,10 +177,7 @@ class _SignInScreenState extends State<SignInScreen> {
                     },
                     child: Text(
                       "Don't have an account? Create Account",
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontSize: 18,
-                      ),
+                      style: Styles.textStyle18.copyWith(color: Colors.white),
                       textAlign: TextAlign.center,
                     ),
                   ),
@@ -189,11 +190,11 @@ class _SignInScreenState extends State<SignInScreen> {
     );
   }
 
-  void logIn() {
+  void logIn() async {
     if (formKey.currentState?.validate() == false) {
       return;
     }
-    viewModel.signIn(
+    await viewModel.signIn(
         email: emailController.text, password: passwordController.text);
   }
 }

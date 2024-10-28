@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:trendista_e_commerce/constants.dart';
+import 'package:trendista_e_commerce/core/styles.dart';
 
 typedef OnButtonClicked = void Function();
 
@@ -20,17 +22,15 @@ class CustomButtom extends StatelessWidget {
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(15.r),
             ),
-            padding: EdgeInsets.all(24),
+            padding: const EdgeInsets.all(24),
           ),
           onPressed: () {
             onButtonClicked();
           },
           child: Text(
             buttonTitle,
-            style: TextStyle(
-              fontSize: 20.sp,
-              fontWeight: FontWeight.w600,
-              color: Color(0xff004182),
+            style: Styles.textStyle20.copyWith(
+              color: kSecondaryColor,
             ),
           )),
     );

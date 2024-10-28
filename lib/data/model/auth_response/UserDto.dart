@@ -3,37 +3,61 @@ import 'package:trendista_e_commerce/domain/entities/auth_entity/UserEntity.dart
 class UserDto {
   UserDto({
     this.name,
+    this.phone,
     this.email,
-    this.role,
+    this.id,
+    this.image,
+    this.token,
   });
 
   UserDto.fromJson(dynamic json) {
     name = json['name'];
+    phone = json['phone'];
     email = json['email'];
-    role = json['role'];
+    id = json['id'];
+    image = json['image'];
+    token = json['token'];
   }
   String? name;
+  String? phone;
   String? email;
-  String? role;
+  int? id;
+  String? image;
+  String? token;
   UserDto copyWith({
     String? name,
+    String? phone,
     String? email,
-    String? role,
+    int? id,
+    String? image,
+    String? token,
   }) =>
       UserDto(
         name: name ?? this.name,
+        phone: phone ?? this.phone,
         email: email ?? this.email,
-        role: role ?? this.role,
+        id: id ?? this.id,
+        image: image ?? this.image,
+        token: token ?? this.token,
       );
   Map<String, dynamic> toJson() {
     final map = <String, dynamic>{};
     map['name'] = name;
+    map['phone'] = phone;
     map['email'] = email;
-    map['role'] = role;
+    map['id'] = id;
+    map['image'] = image;
+    map['token'] = token;
     return map;
   }
 
   UserEntity toUserEntity() {
-    return UserEntity(role: role, email: email, name: name);
+    return UserEntity(
+        token: token,
+        email: email,
+        name: name,
+        id: id,
+        image: image,
+        phone: phone);
   }
 }

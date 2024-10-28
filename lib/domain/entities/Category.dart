@@ -1,38 +1,34 @@
+import 'package:trendista_e_commerce/data/model/categories_response/CategoryDto.dart';
+
 class Category {
   Category({
     this.id,
     this.name,
-    this.slug,
     this.image,
   });
 
   Category.fromJson(dynamic json) {
-    id = json['_id'];
+    id = json['id'].toInt();
     name = json['name'];
-    slug = json['slug'];
     image = json['image'];
   }
-  String? id;
+  int? id;
   String? name;
-  String? slug;
   String? image;
   Category copyWith({
-    String? id,
+    int? id,
     String? name,
-    String? slug,
     String? image,
   }) =>
       Category(
         id: id ?? this.id,
         name: name ?? this.name,
-        slug: slug ?? this.slug,
         image: image ?? this.image,
       );
   Map<String, dynamic> toJson() {
     final map = <String, dynamic>{};
-    map['_id'] = id;
+    map['id'] = id;
     map['name'] = name;
-    map['slug'] = slug;
     map['image'] = image;
     return map;
   }

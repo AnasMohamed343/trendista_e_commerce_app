@@ -1,43 +1,37 @@
-import 'UserEntity.dart';
+import 'package:trendista_e_commerce/domain/entities/auth_entity/UserEntity.dart';
 
 class AuthEntity {
   AuthEntity({
+    this.status,
     this.message,
-    this.statusMsg,
-    this.user,
-    this.token,
+    this.data,
   });
 
   AuthEntity.fromJson(dynamic json) {
+    status = json['status'];
     message = json['message'];
-    statusMsg = json['statusMsg'];
-    user = json['user'] != null ? UserEntity.fromJson(json['user']) : null;
-    token = json['token'];
+    data = json['data'] != null ? UserEntity.fromJson(json['data']) : null;
   }
+  bool? status;
   String? message;
-  String? statusMsg;
-  UserEntity? user;
-  String? token;
+  UserEntity? data;
   AuthEntity copyWith({
+    bool? status,
     String? message,
-    String? statusMsg,
-    UserEntity? user,
-    String? token,
+    UserEntity? data,
   }) =>
       AuthEntity(
+        status: status ?? this.status,
         message: message ?? this.message,
-        statusMsg: statusMsg ?? this.statusMsg,
-        user: user ?? this.user,
-        token: token ?? this.token,
+        data: data ?? this.data,
       );
   Map<String, dynamic> toJson() {
     final map = <String, dynamic>{};
+    map['status'] = status;
     map['message'] = message;
-    map['statusMsg'] = statusMsg;
-    if (user != null) {
-      map['user'] = user?.toJson();
+    if (data != null) {
+      map['data'] = data?.toJson();
     }
-    map['token'] = token;
     return map;
   }
 }

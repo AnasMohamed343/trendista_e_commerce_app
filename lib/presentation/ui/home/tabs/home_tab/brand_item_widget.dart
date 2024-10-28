@@ -2,7 +2,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:trendista_e_commerce/domain/entities/Brand.dart';
-import 'package:trendista_e_commerce/domain/entities/Category.dart';
+import 'package:trendista_e_commerce/domain/entities/route_e-commerce/Category.dart';
 
 class BrandItemWidget extends StatelessWidget {
   Brand brand;
@@ -18,8 +18,8 @@ class BrandItemWidget extends StatelessWidget {
           height: 80.h,
           width: 90.w,
           imageUrl: brand.image ?? '',
-          placeholder: (context, url) => CircularProgressIndicator(),
-          errorWidget: (context, url, error) => Icon(Icons.error),
+          placeholder: (context, url) => const CircularProgressIndicator(),
+          errorWidget: (context, url, error) => const Icon(Icons.error),
         ),
       ),
     );

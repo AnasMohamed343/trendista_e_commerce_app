@@ -3,8 +3,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:trendista_e_commerce/core/ex.dart';
-import 'package:trendista_e_commerce/domain/entities/Category.dart';
+import 'package:trendista_e_commerce/core/styles.dart';
+//import 'package:trendista_e_commerce/domain/entities/route_e-commerce/Category.dart';
 import 'package:trendista_e_commerce/presentation/ui/home/tabs/products_tab/products_tab.dart';
+
+import 'package:trendista_e_commerce/domain/entities/Category.dart';
 
 class CategoryTabWidget extends StatelessWidget {
   Category category;
@@ -13,12 +16,18 @@ class CategoryTabWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     return InkWell(
       onTap: () {
-        ProductsTab(category).goTo();
+        // ProductsTab(category).goTo();
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => ProductsTab(category),
+          ),
+        );
       },
       child: Container(
-        height: 90.h,
-        width: 90.w,
-        margin: EdgeInsets.all(5),
+        height: 100.h,
+        width: 100.w,
+        margin: const EdgeInsets.all(5),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.center,
           mainAxisAlignment: MainAxisAlignment.center,
@@ -27,11 +36,12 @@ class CategoryTabWidget extends StatelessWidget {
               borderRadius: BorderRadius.circular(5),
               child: CachedNetworkImage(
                 fit: BoxFit.fill,
-                height: 85,
-                width: 90,
+                height: 95.h,
+                width: 100.w,
                 imageUrl: category.image ?? '',
-                placeholder: (context, url) => CircularProgressIndicator(),
-                errorWidget: (context, url, error) => Icon(Icons.error),
+                placeholder: (context, url) =>
+                    const CircularProgressIndicator(),
+                errorWidget: (context, url, error) => const Icon(Icons.error),
               ),
             ),
             SizedBox(
@@ -40,10 +50,8 @@ class CategoryTabWidget extends StatelessWidget {
             Text(
               category.name ?? '',
               maxLines: 1,
-              style: TextStyle(
+              style: Styles.textStyle15.copyWith(
                 overflow: TextOverflow.ellipsis,
-                color: Colors.black,
-                fontSize: 14,
               ),
             ),
           ],
