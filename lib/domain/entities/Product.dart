@@ -1,147 +1,159 @@
-import 'Subcategory.dart';
-import 'Category.dart';
-import 'Brand.dart';
+// class Product {
+//   Product({
+//     this.id,
+//     this.price,
+//     this.oldPrice,
+//     this.discount,
+//     this.image,
+//     this.name,
+//     this.description,
+//     this.images,
+//     this.inFavorites,
+//     this.inCart,
+//   });
+//
+//   Product.fromJson(dynamic json) {
+//     id = json['id'].toInt();
+//     price = json['price'].toInt();
+//     oldPrice = json['old_price'].toInt();
+//     discount = json['discount'].toInt();
+//     image = json['image'];
+//     name = json['name'];
+//     description = json['description'];
+//     images = json['images'] != null ? json['images'].cast<String>() : [];
+//     inFavorites = json['in_favorites'];
+//     inCart = json['in_cart'];
+//   }
+//   int? id;
+//   int? price;
+//   int? oldPrice;
+//   int? discount;
+//   String? image;
+//   String? name;
+//   String? description;
+//   List<String>? images;
+//   bool? inFavorites;
+//   bool? inCart;
+//   Product copyWith({
+//     int? id,
+//     int? price,
+//     int? oldPrice,
+//     int? discount,
+//     String? image,
+//     String? name,
+//     String? description,
+//     List<String>? images,
+//     bool? inFavorites,
+//     bool? inCart,
+//   }) =>
+//       Product(
+//         id: id ?? this.id,
+//         price: price ?? this.price,
+//         oldPrice: oldPrice ?? this.oldPrice,
+//         discount: discount ?? this.discount,
+//         image: image ?? this.image,
+//         name: name ?? this.name,
+//         description: description ?? this.description,
+//         images: images ?? this.images,
+//         inFavorites: inFavorites ?? this.inFavorites,
+//         inCart: inCart ?? this.inCart,
+//       );
+//   Map<String, dynamic> toJson() {
+//     final map = <String, dynamic>{};
+//     map['id'] = id;
+//     map['price'] = price;
+//     map['old_price'] = oldPrice;
+//     map['discount'] = discount;
+//     map['image'] = image;
+//     map['name'] = name;
+//     map['description'] = description;
+//     map['images'] = images;
+//     map['in_favorites'] = inFavorites;
+//     map['in_cart'] = inCart;
+//     return map;
+//   }
+// }
 
 class Product {
   Product({
-    this.sold,
-    this.images,
-    this.subcategory,
-    this.ratingsQuantity,
     this.id,
-    this.title,
-    this.slug,
-    this.description,
-    this.quantity,
     this.price,
-    this.priceAfterDiscount,
-    this.availableColors,
-    this.imageCover,
-    this.category,
-    this.brand,
-    this.ratingsAverage,
-    this.createdAt,
-    this.updatedAt,
+    this.oldPrice,
+    this.discount,
+    this.image,
+    this.name,
+    this.description,
+    this.images,
+    this.inFavorites,
+    this.inCart,
   });
 
   Product.fromJson(dynamic json) {
-    sold = json['sold'];
-    images = json['images'] != null ? json['images'].cast<String>() : [];
-    if (json['subcategory'] != null) {
-      subcategory = [];
-      json['subcategory'].forEach((v) {
-        subcategory?.add(Subcategory.fromJson(v));
-      });
-    }
-    ratingsQuantity = json['ratingsQuantity'];
-    id = json['_id'];
-    title = json['title'];
-    slug = json['slug'];
+    id = json['id']?.toInt();
+
+    // price = json['price'].toInt(); // Handle null
+    // oldPrice = json['old_price'].toInt(); // Handle null
+    // discount = json['discount'].toInt(); // Handle null
+    price = json['price']?.toInt();
+    oldPrice = json['old_price']?.toInt();
+    discount = json['discount']?.toInt();
+
+    image = json['image'];
+    name = json['name'];
     description = json['description'];
-    quantity = json['quantity'];
-    price = json['price'];
-    priceAfterDiscount = json['priceAfterDiscount'];
-    if (json['availableColors'] != null) {
-      availableColors = [];
-      json['availableColors'].forEach((v) {
-        availableColors?.add(Product.fromJson(v));
-      });
-    }
-    imageCover = json['imageCover'];
-    category =
-        json['category'] != null ? Category.fromJson(json['category']) : null;
-    brand = json['brand'] != null ? Brand.fromJson(json['brand']) : null;
-    ratingsAverage = json['ratingsAverage'];
-    createdAt = json['createdAt'];
-    updatedAt = json['updatedAt'];
-    id = json['id'];
+    images = json['images'] != null ? json['images'].cast<String>() : [];
+    inFavorites = json['in_favorites'];
+    inCart = json['in_cart'];
   }
-  num? sold;
-  List<String>? images;
-  List<Subcategory>? subcategory;
-  num? ratingsQuantity;
-  String? id;
-  String? title;
-  String? slug;
+
+  int? id;
+  int? price;
+  int? oldPrice;
+  int? discount;
+  String? image;
+  String? name;
   String? description;
-  num? quantity;
-  num? price;
-  num? priceAfterDiscount;
-  List<dynamic>? availableColors;
-  String? imageCover;
-  Category? category;
-  Brand? brand;
-  num? ratingsAverage;
-  String? createdAt;
-  String? updatedAt;
+  List<String>? images;
+  bool? inFavorites;
+  bool? inCart;
+
   Product copyWith({
-    num? sold,
-    List<String>? images,
-    List<Subcategory>? subcategory,
-    num? ratingsQuantity,
-    String? title,
-    String? slug,
+    int? id,
+    int? price,
+    int? oldPrice,
+    int? discount,
+    String? image,
+    String? name,
     String? description,
-    num? quantity,
-    num? price,
-    num? priceAfterDiscount,
-    List<dynamic>? availableColors,
-    String? imageCover,
-    Category? category,
-    Brand? brand,
-    num? ratingsAverage,
-    String? createdAt,
-    String? updatedAt,
+    List<String>? images,
+    bool? inFavorites,
+    bool? inCart,
   }) =>
       Product(
-        sold: sold ?? this.sold,
-        images: images ?? this.images,
-        subcategory: subcategory ?? this.subcategory,
-        ratingsQuantity: ratingsQuantity ?? this.ratingsQuantity,
         id: id ?? this.id,
-        title: title ?? this.title,
-        slug: slug ?? this.slug,
-        description: description ?? this.description,
-        quantity: quantity ?? this.quantity,
         price: price ?? this.price,
-        priceAfterDiscount: priceAfterDiscount ?? this.priceAfterDiscount,
-        availableColors: availableColors ?? this.availableColors,
-        imageCover: imageCover ?? this.imageCover,
-        category: category ?? this.category,
-        brand: brand ?? this.brand,
-        ratingsAverage: ratingsAverage ?? this.ratingsAverage,
-        createdAt: createdAt ?? this.createdAt,
-        updatedAt: updatedAt ?? this.updatedAt,
+        oldPrice: oldPrice ?? this.oldPrice,
+        discount: discount ?? this.discount,
+        image: image ?? this.image,
+        name: name ?? this.name,
+        description: description ?? this.description,
+        images: images ?? this.images,
+        inFavorites: inFavorites ?? this.inFavorites,
+        inCart: inCart ?? this.inCart,
       );
+
   Map<String, dynamic> toJson() {
     final map = <String, dynamic>{};
-    map['sold'] = sold;
-    map['images'] = images;
-    if (subcategory != null) {
-      map['subcategory'] = subcategory?.map((v) => v.toJson()).toList();
-    }
-    map['ratingsQuantity'] = ratingsQuantity;
-    map['_id'] = id;
-    map['title'] = title;
-    map['slug'] = slug;
-    map['description'] = description;
-    map['quantity'] = quantity;
-    map['price'] = price;
-    map['priceAfterDiscount'] = priceAfterDiscount;
-    if (availableColors != null) {
-      map['availableColors'] = availableColors?.map((v) => v.toJson()).toList();
-    }
-    map['imageCover'] = imageCover;
-    if (category != null) {
-      map['category'] = category?.toJson();
-    }
-    if (brand != null) {
-      map['brand'] = brand?.toJson();
-    }
-    map['ratingsAverage'] = ratingsAverage;
-    map['createdAt'] = createdAt;
-    map['updatedAt'] = updatedAt;
     map['id'] = id;
+    map['price'] = price;
+    map['old_price'] = oldPrice;
+    map['discount'] = discount;
+    map['image'] = image;
+    map['name'] = name;
+    map['description'] = description;
+    map['images'] = images;
+    map['in_favorites'] = inFavorites;
+    map['in_cart'] = inCart;
     return map;
   }
 }

@@ -9,7 +9,7 @@ class SignInUseCase {
   @factoryMethod
   SignInUseCase({required this.authRepository});
 
-  Future<Either<AuthEntity, String>> Invoke(
+  Future<Either<AuthEntity, String>> invoke(
       {required String email, required String password}) {
     return authRepository.signIn(email: email, password: password);
   }

@@ -22,7 +22,7 @@ class SignUpViewModel extends Cubit<SignUpViewModelState> {
           mobileNumber: mobileNumber,
           name: name);
       result.fold((response) {
-        emit(SuccessState(token: response.token ?? ''));
+        emit(SuccessState(token: response.data?.token ?? ''));
       }, (error) {
         emit(ErrorState(errorMessage: error));
       });

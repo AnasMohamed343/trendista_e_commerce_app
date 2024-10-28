@@ -2,21 +2,28 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:trendista_e_commerce/constants.dart';
 import 'package:trendista_e_commerce/core/local/prefs_helper.dart';
+import 'package:trendista_e_commerce/core/utils/assets_manager.dart';
 import 'package:trendista_e_commerce/core/utils/routes_manager.dart';
-import 'package:trendista_e_commerce/domain/entities/Category.dart';
+import 'package:trendista_e_commerce/domain/entities/route_e-commerce/Category.dart';
 import 'package:trendista_e_commerce/presentation/ui/home/home_screen_vm.dart';
 import 'package:trendista_e_commerce/presentation/ui/home/tabs/category_tab/category_tab.dart';
+import 'package:trendista_e_commerce/presentation/ui/home/tabs/favorite_tab/favorite_list_tab.dart';
 import 'package:trendista_e_commerce/presentation/ui/home/tabs/home_tab/home_tab_view.dart';
 import 'package:trendista_e_commerce/presentation/ui/home/tabs/profile_tab/profile_tab.dart';
-import 'package:trendista_e_commerce/presentation/ui/home/tabs/wish_list_tab/wish_list_tab.dart';
+import 'package:trendista_e_commerce/presentation/ui/home/widgets/custom_app_bar.dart';
+import 'package:trendista_e_commerce/presentation/ui/home/widgets/home_app_bar.dart';
 
 class HomeScreen extends StatelessWidget {
-  //HomeScreen({super.key});
+  HomeScreen({super.key});
   int selectedIndex = 0;
   var viewModel = HomeScreenViewModel();
   Widget tabPreview = HomeTabView();
+
+  List<String> tabsName = ['Trendista', 'Categories', 'Favorites', 'Profile'];
   @override
   Widget build(BuildContext context) {
     return SafeArea(
@@ -28,32 +35,32 @@ class HomeScreen extends StatelessWidget {
           } else if (state is HomeCategoriesTabState) {
             tabPreview = CategoryTab();
           } else if (state is HomeWishListTabState) {
-            tabPreview = WishListTab();
+            tabPreview = FavoriteListTab();
           } else {
             tabPreview = ProfileTab();
           }
           return Scaffold(
+            backgroundColor: Colors.white,
             appBar: AppBar(
-              actions: [
-                IconButton(
-                    onPressed: () {
-                      logOut(context);
-                    },
-                    icon: Icon(Icons.logout))
-              ],
-              title: Text(
-                'Trendista',
-                style: GoogleFonts.almendra(
-                  textStyle: Theme.of(context).textTheme.displayLarge,
-                  fontSize: 24,
-                  fontWeight: FontWeight.w700,
-                  color: Color(0xff06004F),
-                  //fontStyle: FontStyle.italic,
-                ),
-              ),
+              // actions: [
+              //   IconButton(
+              //       onPressed: () {
+              //         logOut(context);
+              //       },
+              //       icon: const Icon(Icons.logout))
+              // ],
+              backgroundColor: Colors.white,
+              title: Text(tabsName[selectedIndex],
+                  style: GoogleFonts.almendra(
+                    textStyle: Theme.of(context).textTheme.displayLarge,
+                    fontSize: 24,
+                    fontWeight: FontWeight.w700,
+                    color: kPrimaryColor,
+                    //fontStyle: FontStyle.italic,
+                  )),
             ),
             bottomNavigationBar: Container(
-                decoration: BoxDecoration(
+                decoration: const BoxDecoration(
                   color: Colors.transparent,
                   borderRadius: BorderRadius.only(
                       topRight: Radius.circular(30),
@@ -64,7 +71,7 @@ class HomeScreen extends StatelessWidget {
                   ],
                 ),
                 child: ClipRRect(
-                    borderRadius: BorderRadius.only(
+                    borderRadius: const BorderRadius.only(
                       topLeft: Radius.circular(30.0),
                       topRight: Radius.circular(30.0),
                     ),
@@ -76,29 +83,29 @@ class HomeScreen extends StatelessWidget {
                           // or can handle the tabs by bloc :
                           viewModel.getTabs(selectedIndex);
                         },
-                        backgroundColor: Color(0xff004182),
+                        backgroundColor: kPrimaryColor,
                         type: BottomNavigationBarType.fixed,
-                        fixedColor: Color(0xff004182),
+                        fixedColor: kPrimaryColor,
                         items: [
                           selectedIndex == 0
-                              ? BottomNavigationBarItem(
+                              ? const BottomNavigationBarItem(
                                   icon: CircleAvatar(
                                       child: ImageIcon(AssetImage(
                                           'assets/icons/ic_home.png'))),
                                   label: "")
-                              : BottomNavigationBarItem(
+                              : const BottomNavigationBarItem(
                                   icon: ImageIcon(
                                       color: Colors.white,
                                       AssetImage('assets/icons/ic_home.png')),
                                   label: ""),
                           selectedIndex == 1
-                              ? BottomNavigationBarItem(
+                              ? const BottomNavigationBarItem(
                                   icon: CircleAvatar(
                                     child: ImageIcon(AssetImage(
                                         'assets/icons/ic_category.png')),
                                   ),
                                   label: "")
-                              : BottomNavigationBarItem(
+                              : const BottomNavigationBarItem(
                                   icon: ImageIcon(
                                       color: Colors.white,
                                       AssetImage(
@@ -107,21 +114,24 @@ class HomeScreen extends StatelessWidget {
                           selectedIndex == 2
                               ? BottomNavigationBarItem(
                                   icon: CircleAvatar(
-                                      child: ImageIcon(AssetImage(
-                                          'assets/icons/ic_fav.png'))),
+                                      child: SvgPicture.asset(
+                                    AssetsManager.favIcon,
+                                    color: Colors.black,
+                                  )),
                                   label: "")
                               : BottomNavigationBarItem(
-                                  icon: ImageIcon(
-                                      color: Colors.white,
-                                      AssetImage('assets/icons/ic_fav.png')),
+                                  icon: SvgPicture.asset(
+                                    AssetsManager.favIcon,
+                                    color: Colors.white,
+                                  ),
                                   label: ""),
                           selectedIndex == 3
-                              ? BottomNavigationBarItem(
+                              ? const BottomNavigationBarItem(
                                   icon: CircleAvatar(
                                       child: ImageIcon(AssetImage(
                                           'assets/icons/ic_user.png'))),
                                   label: "")
-                              : BottomNavigationBarItem(
+                              : const BottomNavigationBarItem(
                                   icon: ImageIcon(
                                       color: Colors.white,
                                       AssetImage('assets/icons/ic_user.png')),
@@ -139,11 +149,6 @@ class HomeScreen extends StatelessWidget {
         },
       ),
     );
-  }
-
-  void logOut(context) {
-    PrefsHelper.clearToken();
-    Navigator.pushReplacementNamed(context, RoutesManager.signInRouteName);
   }
 
   // List<Widget> tabs = [

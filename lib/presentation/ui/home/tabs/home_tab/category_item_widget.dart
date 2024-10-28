@@ -1,7 +1,9 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:trendista_e_commerce/core/ex.dart';
+import 'package:trendista_e_commerce/core/styles.dart';
 import 'package:trendista_e_commerce/domain/entities/Category.dart';
+//import 'package:trendista_e_commerce/domain/entities/route_e-commerce/Category.dart';
 import 'package:trendista_e_commerce/presentation/ui/home/tabs/products_tab/products_tab.dart';
 
 class CategoryItemWidget extends StatelessWidget {
@@ -20,23 +22,25 @@ class CategoryItemWidget extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             ClipRRect(
-              borderRadius: BorderRadius.circular(80),
+              borderRadius: BorderRadius.circular(50),
               child: CachedNetworkImage(
                 fit: BoxFit.fill,
-                height: 71,
-                width: 90,
+                height: 65,
+                width: 80,
                 imageUrl: category.image ?? '',
-                placeholder: (context, url) => CircularProgressIndicator(),
-                errorWidget: (context, url, error) => Icon(Icons.error),
+                placeholder: (context, url) =>
+                    const CircularProgressIndicator(),
+                errorWidget: (context, url, error) => const Icon(Icons.error),
               ),
             ),
+            const SizedBox(height: 2),
             Text(
               category.name ?? '',
               maxLines: 1,
-              style: TextStyle(
-                overflow: TextOverflow.ellipsis,
+              style: Styles.textStyle16.copyWith(
                 color: Colors.black,
-                fontSize: 16,
+                overflow: TextOverflow.ellipsis,
+                fontWeight: FontWeight.w500,
               ),
             ),
           ],

@@ -1,14 +1,14 @@
-import '../paginationDto.dart';
+import '../../paginationDto.dart';
 import 'categoryDto.dart';
 
-class CategoriesResponse {
-  CategoriesResponse({
+class CategoryResponse {
+  CategoryResponse({
     this.results,
     this.metadata,
     this.data,
   });
 
-  CategoriesResponse.fromJson(dynamic json) {
+  CategoryResponse.fromJson(dynamic json) {
     results = json['results'];
     metadata = json['metadata'] != null
         ? PaginationDto.fromJson(json['metadata'])
@@ -23,12 +23,12 @@ class CategoriesResponse {
   int? results;
   PaginationDto? metadata;
   List<CategoryDto>? data;
-  CategoriesResponse copyWith({
+  CategoryResponse copyWith({
     int? results,
     PaginationDto? metadata,
     List<CategoryDto>? data,
   }) =>
-      CategoriesResponse(
+      CategoryResponse(
         results: results ?? this.results,
         metadata: metadata ?? this.metadata,
         data: data ?? this.data,

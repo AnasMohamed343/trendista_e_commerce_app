@@ -1,10 +1,11 @@
-import 'package:trendista_e_commerce/data/model/brands_response/brandDto.dart';
-import 'package:trendista_e_commerce/data/model/categories_response/categoryDto.dart';
-import 'package:trendista_e_commerce/data/model/products_response/SubcategoryDto.dart';
-import 'package:trendista_e_commerce/domain/entities/Product.dart';
+import 'package:trendista_e_commerce/domain/entities/Category.dart';
 
-class ProductDto {
-  ProductDto({
+import '../Subcategory.dart';
+//import 'route_e-commerce/Category.dart';
+import '../Brand.dart';
+
+class Product {
+  Product({
     this.sold,
     this.images,
     this.subcategory,
@@ -16,22 +17,22 @@ class ProductDto {
     this.quantity,
     this.price,
     this.priceAfterDiscount,
+    this.availableColors,
     this.imageCover,
     this.category,
     this.brand,
     this.ratingsAverage,
     this.createdAt,
     this.updatedAt,
-    this.availableColors,
   });
 
-  ProductDto.fromJson(dynamic json) {
+  Product.fromJson(dynamic json) {
     sold = json['sold'];
     images = json['images'] != null ? json['images'].cast<String>() : [];
     if (json['subcategory'] != null) {
       subcategory = [];
       json['subcategory'].forEach((v) {
-        subcategory?.add(SubcategoryDto.fromJson(v));
+        subcategory?.add(Subcategory.fromJson(v));
       });
     }
     ratingsQuantity = json['ratingsQuantity'];
@@ -45,14 +46,13 @@ class ProductDto {
     if (json['availableColors'] != null) {
       availableColors = [];
       json['availableColors'].forEach((v) {
-        availableColors?.add(ProductDto.fromJson(v));
+        availableColors?.add(Product.fromJson(v));
       });
     }
     imageCover = json['imageCover'];
-    category = json['category'] != null
-        ? CategoryDto.fromJson(json['category'])
-        : null;
-    brand = json['brand'] != null ? BrandDto.fromJson(json['brand']) : null;
+    category =
+        json['category'] != null ? Category.fromJson(json['category']) : null;
+    brand = json['brand'] != null ? Brand.fromJson(json['brand']) : null;
     ratingsAverage = json['ratingsAverage'];
     createdAt = json['createdAt'];
     updatedAt = json['updatedAt'];
@@ -60,7 +60,7 @@ class ProductDto {
   }
   num? sold;
   List<String>? images;
-  List<SubcategoryDto>? subcategory;
+  List<Subcategory>? subcategory;
   num? ratingsQuantity;
   String? id;
   String? title;
@@ -69,34 +69,33 @@ class ProductDto {
   num? quantity;
   num? price;
   num? priceAfterDiscount;
+  List<dynamic>? availableColors;
   String? imageCover;
-  CategoryDto? category;
-  BrandDto? brand;
+  Category? category;
+  Brand? brand;
   num? ratingsAverage;
   String? createdAt;
   String? updatedAt;
-  List<dynamic>? availableColors;
-  ProductDto copyWith({
+  Product copyWith({
     num? sold,
     List<String>? images,
-    List<SubcategoryDto>? subcategory,
+    List<Subcategory>? subcategory,
     num? ratingsQuantity,
-    String? id,
     String? title,
     String? slug,
     String? description,
     num? quantity,
     num? price,
     num? priceAfterDiscount,
+    List<dynamic>? availableColors,
     String? imageCover,
-    CategoryDto? category,
-    BrandDto? brand,
+    Category? category,
+    Brand? brand,
     num? ratingsAverage,
     String? createdAt,
     String? updatedAt,
-    List<dynamic>? availableColors,
   }) =>
-      ProductDto(
+      Product(
         sold: sold ?? this.sold,
         images: images ?? this.images,
         subcategory: subcategory ?? this.subcategory,
@@ -108,13 +107,13 @@ class ProductDto {
         quantity: quantity ?? this.quantity,
         price: price ?? this.price,
         priceAfterDiscount: priceAfterDiscount ?? this.priceAfterDiscount,
+        availableColors: availableColors ?? this.availableColors,
         imageCover: imageCover ?? this.imageCover,
         category: category ?? this.category,
         brand: brand ?? this.brand,
         ratingsAverage: ratingsAverage ?? this.ratingsAverage,
         createdAt: createdAt ?? this.createdAt,
         updatedAt: updatedAt ?? this.updatedAt,
-        availableColors: availableColors ?? this.availableColors,
       );
   Map<String, dynamic> toJson() {
     final map = <String, dynamic>{};
@@ -146,27 +145,5 @@ class ProductDto {
     map['updatedAt'] = updatedAt;
     map['id'] = id;
     return map;
-  }
-
-  Product toProduct() {
-    return Product(
-        id: id,
-        title: title,
-        availableColors: availableColors,
-        slug: slug,
-        category: category?.toCategory(),
-        subcategory: subcategory?.map((e) => e.toSubCategory()).toList(),
-        description: description,
-        brand: brand?.toBrand(),
-        createdAt: createdAt,
-        imageCover: imageCover,
-        images: images,
-        price: price,
-        quantity: quantity,
-        ratingsAverage: ratingsAverage,
-        ratingsQuantity: ratingsQuantity,
-        sold: sold,
-        updatedAt: updatedAt,
-        priceAfterDiscount: priceAfterDiscount);
   }
 }

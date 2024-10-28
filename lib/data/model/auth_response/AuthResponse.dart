@@ -4,50 +4,44 @@ import 'UserDto.dart';
 
 class AuthResponse {
   AuthResponse({
+    this.status,
     this.message,
-    this.statusMsg,
-    this.user,
-    this.token,
+    this.data,
   });
 
   AuthResponse.fromJson(dynamic json) {
+    status = json['status'];
     message = json['message'];
-    statusMsg = json['statusMsg'];
-    user = json['user'] != null ? UserDto.fromJson(json['user']) : null;
-    token = json['token'];
+    data = json['data'] != null ? UserDto.fromJson(json['data']) : null;
   }
+  bool? status;
   String? message;
-  String? statusMsg;
-  UserDto? user;
-  String? token;
+  UserDto? data;
   AuthResponse copyWith({
+    bool? status,
     String? message,
-    String? statusMsg,
-    UserDto? user,
-    String? token,
+    UserDto? data,
   }) =>
       AuthResponse(
+        status: status ?? this.status,
         message: message ?? this.message,
-        statusMsg: statusMsg ?? this.statusMsg,
-        user: user ?? this.user,
-        token: token ?? this.token,
+        data: data ?? this.data,
       );
   Map<String, dynamic> toJson() {
     final map = <String, dynamic>{};
+    map['status'] = status;
     map['message'] = message;
-    map['statusMsg'] = statusMsg;
-    if (user != null) {
-      map['user'] = user?.toJson();
+    if (data != null) {
+      map['data'] = data?.toJson();
     }
-    map['token'] = token;
     return map;
   }
 
   AuthEntity toAuthEntity() {
     return AuthEntity(
-        user: user?.toUserEntity(),
-        token: token,
-        message: message,
-        statusMsg: statusMsg);
+      data: data?.toUserEntity(),
+      status: status,
+      message: message,
+    );
   }
 }

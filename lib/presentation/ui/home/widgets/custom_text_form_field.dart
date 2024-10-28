@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:trendista_e_commerce/core/styles.dart';
 
 typedef Validation = String? Function(String?);
 
@@ -45,10 +46,7 @@ class _CustomTextFormFieldState extends State<CustomTextFormField> {
           Text(
             widget.formFieldTitle,
             textAlign: TextAlign.start,
-            style: TextStyle(
-                fontSize: 18.sp,
-                color: Colors.white,
-                fontWeight: FontWeight.w500),
+            style: Styles.textStyle18.copyWith(color: Colors.white),
           ),
           SizedBox(
             height: 7.h,
@@ -65,10 +63,8 @@ class _CustomTextFormFieldState extends State<CustomTextFormField> {
                 filled: true,
                 fillColor: Colors.white,
                 hintText: widget.hintText,
-                hintStyle: TextStyle(
-                    fontSize: 16.sp,
-                    fontWeight: FontWeight.w300,
-                    color: Colors.black87),
+                hintStyle: Styles.textStyle16.copyWith(
+                    color: Colors.black87, fontWeight: FontWeight.w300),
                 enabledBorder: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(15.r),
                 ),

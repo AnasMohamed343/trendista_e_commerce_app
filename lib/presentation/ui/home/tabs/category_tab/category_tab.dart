@@ -1,8 +1,13 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:lottie/lottie.dart';
 import 'package:trendista_e_commerce/di/di.dart';
-import 'package:trendista_e_commerce/domain/entities/Category.dart';
+//import 'package:trendista_e_commerce/domain/entities/route_e-commerce/Category.dart';
 import 'package:trendista_e_commerce/presentation/ui/home/tabs/home_tab/category_item_widget.dart';
+
+import 'package:trendista_e_commerce/domain/entities/Category.dart';
+import 'package:trendista_e_commerce/presentation/ui/home/widgets/custom_app_bar.dart';
 
 import 'category_tab_vm.dart';
 import 'category_tab_widget.dart';
@@ -15,28 +20,29 @@ class CategoryTab extends StatefulWidget {
   State<CategoryTab> createState() => _CategoryTabState();
 }
 
-class _CategoryTabState extends State<CategoryTab> {
+class _CategoryTabState extends State<CategoryTab>
+    with TickerProviderStateMixin {
+  late final AnimationController _controller;
   CategoryTabVM viewModel = getIt.get<CategoryTabVM>(); //////
-
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
+    _controller = AnimationController(vsync: this);
+    _controller.repeat(period: const Duration(seconds: 3));
     viewModel.initPage();
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text(
-          'Categories',
-          style: TextStyle(
-            color: Color(0xff06004F),
-            fontSize: 17,
-          ),
-        ),
-      ),
+      backgroundColor: Colors.white,
+      //appBar: CustomAppBar(appbarTitle: 'Categories'),
       body: BlocBuilder<CategoryTabVM, CategoryTabState>(
           bloc:
               viewModel, // can call the func initPage() here like this => viewModel..initPage() , or call it in the initState like i do above.
@@ -45,7 +51,14 @@ class _CategoryTabState extends State<CategoryTab> {
               case LoadingState():
                 {
                   return Center(
-                    child: CircularProgressIndicator(),
+                    child: Lottie.network(
+                        'https://lottie.host/f45c9991-322a-4fe7-bf28-1b08fcb62e6c/xBEyXbOlwu.json',
+                        width: 240,
+                        height: 240,
+                        repeat: true,
+                        errorBuilder: (context, error, stackTrace) {
+                      return const Icon(Icons.error_outline);
+                    }, controller: _controller),
                   );
                 }
               case ErrorState():
@@ -55,8 +68,10 @@ class _CategoryTabState extends State<CategoryTab> {
                       children: [
                         Expanded(child: Text(state.errorMessage ?? '')),
                         ElevatedButton(
-                          onPressed: () {},
-                          child: Text('Try Again'),
+                          onPressed: () {
+                            viewModel.initPage();
+                          },
+                          child: const Text('Try Again'),
                         ),
                       ],
                     ),
@@ -67,22 +82,48 @@ class _CategoryTabState extends State<CategoryTab> {
                   if (widget.categories != null) {
                     return GridView.builder(
                       itemCount: widget.categories?.length,
-                      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                          crossAxisCount: 3),
+                      gridDelegate:
+                          const SliverGridDelegateWithFixedCrossAxisCount(
+                              crossAxisCount: 2),
                       itemBuilder: (context, index) {
                         return CategoryTabWidget(
                             category: widget.categories![index]);
                       },
                     );
                   } else {
-                    return GridView.builder(
-                      itemCount: state.categories?.length,
-                      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                          crossAxisCount: 3),
-                      itemBuilder: (context, index) {
-                        return CategoryTabWidget(
-                            category: state.categories![index]);
-                      },
+                    return Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        // Row(
+                        //   children: [
+                        //     IconButton(
+                        //         onPressed: () {
+                        //           Navigator.pop(context);
+                        //         },
+                        //         icon: const Icon(Icons.arrow_back)),
+                        //     const Text(
+                        //       'Categories',
+                        //       style:
+                        //           TextStyle(fontSize: 20, color: Colors.black),
+                        //     ),
+                        //   ],
+                        // ),
+                        const SizedBox(
+                          height: 20,
+                        ),
+                        Expanded(
+                          child: GridView.builder(
+                            itemCount: state.categories?.length,
+                            gridDelegate:
+                                const SliverGridDelegateWithFixedCrossAxisCount(
+                                    crossAxisCount: 2),
+                            itemBuilder: (context, index) {
+                              return CategoryTabWidget(
+                                  category: state.categories![index]);
+                            },
+                          ),
+                        ),
+                      ],
                     );
                   }
                 }
