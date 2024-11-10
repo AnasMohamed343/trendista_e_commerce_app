@@ -1,71 +1,72 @@
-import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:injectable/injectable.dart';
+import 'dart:async';
+
+import 'package:flutter/material.dart';
 import 'package:trendista_e_commerce/domain/entities/Product.dart';
+import 'package:trendista_e_commerce/domain/entities/cartitem_entity.dart';
 import 'package:trendista_e_commerce/domain/usecases/get_cartitems_usecase.dart';
 
-@injectable
-class CartVM extends Cubit<CartState> {
-  GetCartItemsUseCase getCartItemsUseCase;
+class CartVM extends ChangeNotifier {
+  final GetCartItemsUseCase getCartItemsUseCase;
 
-  List<Product>? _cartItems;
-  Map<String, int> quantities = {}; // Store product quantities by product ID
+  CartVM({required this.getCartItemsUseCase});
 
-  CartVM({required this.getCartItemsUseCase})
-      : super(CartLoadingState(message: 'Loading...'));
+  List<CartItemEntity>? _cartItems;
+  int? _totalPrice;
+  bool _isLoading = false;
+  String? _errorMessage;
 
-  void initPage() async {
-    emit(CartLoadingState(message: 'Loading...'));
+  List<CartItemEntity>? get cartItems => _cartItems;
+  int? get totalPrice => _totalPrice;
+  bool get isLoading => _isLoading;
+  String? get errorMessage => _errorMessage;
+
+  Future<void> initPage() async {
+    _isLoading = true;
+    notifyListeners();
+
     try {
       _cartItems = await getCartItemsUseCase.invoke();
-      var totalPrice = _cartItems?.fold(0, (sum, product) {
-        var productQuantity = quantities[product.id.toString()] ?? 1;
-        return sum + (product.price ?? 0) * productQuantity;
-      });
-      emit(CartSuccessState(cartItems: _cartItems, totalPrice: totalPrice));
+      _totalPrice = await getCartItemsUseCase.getTotalPrice();
+      _isLoading = false;
+      notifyListeners();
     } catch (e) {
-      emit(CartErrorState(errorMessage: e.toString()));
+      _errorMessage = e.toString();
+      _isLoading = false;
+      notifyListeners();
     }
   }
 
-  void addOrRemoveCart(String productId) async {
+  Future<void> addOrRemoveCart(String productId) async {
     try {
       // Optimistically update cart items locally
-      var existingProductIndex = _cartItems
-          ?.indexWhere((product) => product.id.toString() == productId);
+      var existingCartItemIndex = _cartItems?.indexWhere(
+          (cartItem) => (cartItem.product!.id).toString() == productId);
 
-      if (existingProductIndex != null && existingProductIndex != -1) {
-        // Product already exists in the cart, remove it
-        _cartItems?.removeAt(existingProductIndex);
+      if (existingCartItemIndex != null && existingCartItemIndex != -1) {
+        // Remove from local cart and adjust total price locally
+        var removedItem = _cartItems!.removeAt(existingCartItemIndex);
+        _totalPrice = _totalPrice! -
+            (removedItem.product!.price ?? 0 * (removedItem.quantity ?? 0));
       } else {
-        // Product is not in the cart, add it
-        var productToAdd = Product(
-            id: int.parse(productId),
-            inCart: true); // Assuming inCart is a boolean property
-        _cartItems?.add(productToAdd);
+        // Add to local cart and adjust total price locally
+        var productToAdd = Product(id: int.parse(productId), inCart: true);
+        var cartItemToAdd = CartItemEntity(product: productToAdd, quantity: 1);
+        _cartItems!.add(cartItemToAdd);
+        _totalPrice = _totalPrice! + (productToAdd.price ?? 0);
       }
 
-      // Recalculate the total price based on the updated cart
-      var totalPrice = _cartItems?.fold(0, (sum, product) {
-        var productQuantity = quantities[product.id.toString()] ?? 1;
-        return sum + (product.price ?? 0) * productQuantity;
-      });
+      notifyListeners();
 
-      // Emit the updated state immediately
-      emit(CartSuccessState(cartItems: _cartItems, totalPrice: totalPrice));
-
-      // Perform the actual API call to update the cart on the server
+      // Perform the API call to update the cart on the server
       await getCartItemsUseCase.addOrRemoveCart(productId);
 
-      // After successful API call, refresh the cart items and total price from the server
+      // Optionally re-fetch entire cart if necessary
       _cartItems = await getCartItemsUseCase.invoke();
-      totalPrice = _cartItems?.fold(0, (sum, product) {
-        var productQuantity = quantities[product.id.toString()] ?? 1;
-        return sum! + (product.price ?? 0) * productQuantity;
-      });
-
-      emit(CartSuccessState(cartItems: _cartItems, totalPrice: totalPrice));
+      _totalPrice = await getCartItemsUseCase.getTotalPrice();
+      notifyListeners();
     } catch (e) {
-      emit(CartErrorState(errorMessage: e.toString()));
+      _errorMessage = e.toString();
+      notifyListeners();
     }
   }
 
@@ -73,58 +74,69 @@ class CartVM extends Cubit<CartState> {
     if (_cartItems == null || _cartItems!.isEmpty) {
       return false;
     }
-    return _cartItems!.any((product) =>
-        product.id.toString() == productId && product.inCart == true);
+    return _cartItems!.any((cartItem) =>
+        (cartItem.product!.id).toString() == productId &&
+        cartItem.product!.inCart == true); // Access inCart through product
   }
 
-  void updateCartQuantity(String productId, int quantity) async {
+  Future<void> updateCartQuantity(int cartItemId, String quantity) async {
     try {
-      // Update the quantity in the local map
-      quantities[productId] = quantity;
+      // Find the item in the cart and update its quantity optimistically
+      var cartItem = _cartItems?.firstWhere((item) => item.id == cartItemId);
+      if (cartItem != null) {
+        int? oldQuantity = cartItem.quantity;
+        int newQuantity = int.parse(quantity);
+        cartItem.quantity = newQuantity;
 
-      // Calculate the total price based on the updated quantities
-      var totalPrice = _cartItems?.fold(0, (sum, product) {
-        var productQuantity = quantities[product.id.toString()] ?? 1;
-        return sum + (product.price ?? 0) * productQuantity;
-      });
+        // Adjust total price locally based on quantity change
+        int priceChange =
+            (newQuantity - oldQuantity!) * (cartItem.product!.price ?? 0);
+        _totalPrice = _totalPrice! + priceChange;
 
-      emit(CartSuccessState(
-        cartItems: _cartItems,
-        totalPrice: totalPrice,
-        quantity: quantity,
-      ));
+        notifyListeners();
+
+        // Update the cart quantity on the server
+        await getCartItemsUseCase.updateCartQuantity(cartItemId, quantity);
+
+        // Optionally re-fetch entire cart if necessary
+        _cartItems = await getCartItemsUseCase.invoke();
+        _totalPrice = await getCartItemsUseCase.getTotalPrice();
+        notifyListeners();
+      }
     } catch (e) {
-      emit(CartErrorState(errorMessage: e.toString()));
+      _errorMessage = e.toString();
+      notifyListeners();
     }
   }
 
-  int getQuantity(String productId) {
-    return quantities[productId] ?? 1; // Default quantity to 1 if not found
+  int getQuantity(String s) {
+    if (_cartItems == null || _cartItems!.isEmpty) {
+      return 0;
+    }
+    return _cartItems!
+        .firstWhere((cartItem) =>
+            (cartItem.product!.id).toString() == s &&
+            cartItem.product!.inCart == true)
+        .quantity!;
   }
 
-  @override
-  void onChange(Change<CartState> change) {
-    // TODO: implement onChange
-    super.onChange(change);
-    print(change);
+  int getTotalPriceForCart(String s) {
+    if (_cartItems == null || _cartItems!.isEmpty) {
+      return 0;
+    }
+    var cartItemPrice = _cartItems!
+        .firstWhere((cartItem) =>
+            (cartItem.product!.id).toString() == s &&
+            cartItem.product!.inCart == true)
+        .product!
+        .price!;
+    var totalPrice = cartItemPrice * getQuantity(s);
+    return totalPrice;
   }
-}
 
-sealed class CartState {}
-
-class CartLoadingState extends CartState {
-  final String message;
-  CartLoadingState({required this.message});
-}
-
-class CartErrorState extends CartState {
-  final String? errorMessage;
-  CartErrorState({this.errorMessage});
-}
-
-class CartSuccessState extends CartState {
-  final List<Product>? cartItems;
-  final int? totalPrice;
-  final int? quantity;
-  CartSuccessState({this.cartItems, this.totalPrice = 0, this.quantity});
+  Future<void> refreshCart() async {
+    _cartItems = await getCartItemsUseCase.invoke();
+    _totalPrice = await getCartItemsUseCase.getTotalPrice();
+    notifyListeners();
+  }
 }

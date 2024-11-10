@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:trendista_e_commerce/constants.dart';
+import 'package:trendista_e_commerce/core/ui_components/info_widget.dart';
 import 'package:trendista_e_commerce/presentation/ui/home/tabs/carts/cart_vm.dart';
 
 class CustomIconButtonAddToCart extends StatefulWidget {
@@ -25,27 +26,35 @@ class _CustomIconButtonAddToCartState extends State<CustomIconButtonAddToCart> {
 
   @override
   Widget build(BuildContext context) {
+    // double w = MediaQuery.of(context).size.width;
+    // double h = MediaQuery.of(context).size.height;
     return GestureDetector(
       onTap: () {
         widget.onToggleCart(widget.productId);
         setState(() {});
       },
-      child: Container(
-        width: 32.w,
-        height: 32.h,
-        alignment: Alignment.center,
-        padding: const EdgeInsets.all(3),
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(40),
-          color: kSecondaryColor,
-        ),
-        child: Icon(
-          viewModel.isAddedToCart(widget.productId)
-              ? Icons.remove_shopping_cart_outlined
-              : Icons.add_shopping_cart,
-          color: Colors.white,
-          size: 20,
-        ),
+      child: InfoWidget(
+        builder: (context, deviceInfo) {
+          double w = deviceInfo.screenWidth;
+          double h = deviceInfo.screenHeight;
+          return Container(
+            width: w * 0.08,
+            height: h * 0.046,
+            alignment: Alignment.center,
+            padding: EdgeInsets.all(w * 0.01),
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(40),
+              color: kSecondaryColor,
+            ),
+            child: Icon(
+              viewModel.isAddedToCart(widget.productId)
+                  ? Icons.remove_shopping_cart_outlined
+                  : Icons.add_shopping_cart,
+              color: Colors.white,
+              size: w * 0.047,
+            ),
+          );
+        },
       ),
     );
   }

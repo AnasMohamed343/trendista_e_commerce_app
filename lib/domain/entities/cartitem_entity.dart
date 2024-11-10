@@ -1,30 +1,27 @@
 import 'package:trendista_e_commerce/domain/entities/Product.dart';
 
-import 'ProductCartItemDto.dart';
-
-class CartItems {
-  CartItems({
+class CartItemEntity {
+  CartItemEntity({
     this.id,
     this.quantity,
     this.product,
   });
 
-  CartItems.fromJson(dynamic json) {
+  CartItemEntity.fromJson(dynamic json) {
     id = json['id'].toInt();
     quantity = json['quantity'] != null ? json['quantity'].toInt() : 0;
-    product = json['product'] != null
-        ? ProductCartItemDto.fromJson(json['product'])
-        : null;
+    product =
+        json['product'] != null ? Product.fromJson(json['product']) : null;
   }
   int? id;
   int? quantity;
-  ProductCartItemDto? product;
-  CartItems copyWith({
+  Product? product;
+  CartItemEntity copyWith({
     int? id,
     int? quantity,
-    ProductCartItemDto? product,
+    Product? product,
   }) =>
-      CartItems(
+      CartItemEntity(
         id: id ?? this.id,
         quantity: quantity ?? this.quantity,
         product: product ?? this.product,
@@ -38,6 +35,4 @@ class CartItems {
     }
     return map;
   }
-
-  Product toProduct() => product!.toProduct();
 }

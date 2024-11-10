@@ -1,7 +1,10 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:injectable/injectable.dart';
+import 'package:provider/provider.dart';
+import 'package:trendista_e_commerce/di/di.dart';
 import 'package:trendista_e_commerce/domain/entities/Product.dart';
 import 'package:trendista_e_commerce/domain/usecases/get_product_details_usecase.dart';
+import 'package:trendista_e_commerce/presentation/ui/home/tabs/carts/cart_vm.dart';
 
 @injectable
 class ProductDetailsVM extends Cubit<ProductDetailsState> {
@@ -110,9 +113,15 @@ class ProductDetailsVM extends Cubit<ProductDetailsState> {
     }
   }
 
+  final cartProvider = getIt<CartVM>();
+
   // Calculate total price based on selected quantity
-  int calculateTotalPrice(int productPrice, int productId) {
-    return productPrice * (productQuantities[productId] ?? 1);
+  int? calculateTotalPrice(int productPrice, int productId) {
+    var totalPrice =
+        productPrice * cartProvider.getQuantity(productId.toString());
+    print(totalPrice);
+
+    return totalPrice;
   }
 
   // clear the quantity for the specific product and the total price after the quantity is updated

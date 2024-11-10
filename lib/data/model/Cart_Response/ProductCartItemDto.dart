@@ -88,4 +88,19 @@ class ProductCartItemDto {
         inFavorites: inFavorites,
         inCart: inCart);
   }
+
+  factory ProductCartItemDto.fromProduct(Product product) {
+    return ProductCartItemDto(
+      id: product.id,
+      price: product.price,
+      oldPrice: product.oldPrice,
+      discount: product.discount,
+      image: product.image,
+      name: product.name,
+      description: product.description,
+      images: product.images,
+      inFavorites: product.inFavorites,
+      inCart: product.inCart,
+    );
+  }
 }

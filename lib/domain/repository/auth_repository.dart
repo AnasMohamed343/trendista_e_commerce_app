@@ -12,5 +12,5 @@ abstract class AuthRepository {
   Future<Either<AuthEntity, String>> signIn(
       {required String email, required String password});
 
-  Future getProfileData();
+  //Future getProfileData();
 }

@@ -12,5 +12,5 @@ abstract class AuthDataSource {
   Future<Either<AuthResponse, String>> signIn(
       {required String email, required String password});
 
-  Future getProfileData();
+  //Future getProfileData();
 }

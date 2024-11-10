@@ -64,9 +64,9 @@ class AuthDataSourceImpl extends AuthDataSource {
     }
   }
 
-  @override
-  Future getProfileData() async {
-    var response = await apiManager.getProfileData();
-    return response.data?.toUserEntity();
-  }
+  // @override
+  // Future getProfileData() async {
+  //   var response = await apiManager.getProfileData();
+  //   return response.data?.toUserEntity();
+  // }
 }

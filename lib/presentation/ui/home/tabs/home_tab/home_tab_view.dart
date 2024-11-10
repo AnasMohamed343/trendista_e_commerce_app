@@ -3,8 +3,10 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:skeletonizer/skeletonizer.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 import 'package:trendista_e_commerce/constants.dart';
+import 'package:trendista_e_commerce/core/enums/device_type.dart';
 import 'package:trendista_e_commerce/core/ex.dart';
 import 'package:trendista_e_commerce/core/styles.dart';
+import 'package:trendista_e_commerce/core/ui_components/info_widget.dart';
 import 'package:trendista_e_commerce/di/di.dart';
 import 'package:trendista_e_commerce/domain/entities/BannerEntity.dart';
 import 'package:trendista_e_commerce/domain/entities/Brand.dart';
@@ -43,7 +45,7 @@ class _HomeTabViewState extends State<HomeTabView> {
       bloc: viewModel,
       builder: (context, state) {
         if (state is LoadingState) {
-          double h = MediaQuery.of(context).size.height;
+          final h = MediaQuery.of(context).size.height;
           return Skeletonizer(
             enabled: true,
             child: CustomScrollView(
@@ -108,7 +110,7 @@ class _HomeTabViewState extends State<HomeTabView> {
             ),
           );
         } else if (state is SuccessState) {
-          double h = MediaQuery.of(context).size.height;
+          final h = MediaQuery.of(context).size.height;
           var categories = state.categories;
           var brands = state.brands;
           var products = state.products;
@@ -142,6 +144,8 @@ class _HomeTabViewState extends State<HomeTabView> {
                     CustomPageIndicator(
                       controller: pageController,
                       count: 4,
+                      dotHeight: h * 0.01,
+                      dotWidth: h * 0.01,
                     ),
                     Padding(
                       padding: const EdgeInsets.symmetric(
@@ -150,7 +154,7 @@ class _HomeTabViewState extends State<HomeTabView> {
                         children: [
                           Text(
                             'Categories',
-                            style: Styles.textStyle18.copyWith(
+                            style: Styles.textStyle18(context).copyWith(
                               color: kPrimaryColor,
                             ),
                           ),
@@ -169,7 +173,7 @@ class _HomeTabViewState extends State<HomeTabView> {
                             },
                             child: Text(
                               'view All',
-                              style: Styles.textStyle15.copyWith(
+                              style: Styles.textStyle15(context).copyWith(
                                 color: Colors.blue,
                               ),
                             ),
@@ -182,8 +186,8 @@ class _HomeTabViewState extends State<HomeTabView> {
                       child: ListView.builder(
                         padding: EdgeInsets.zero,
                         scrollDirection: Axis.horizontal,
-                        itemBuilder: (context, index) =>
-                            CategoryItemWidget(category: categories![index]),
+                        itemBuilder: (context, index) => CategoryItemWidget(
+                            category: categories?[index] ?? Category()),
                         itemCount: categories?.length,
                       ),
                     ),
@@ -196,25 +200,36 @@ class _HomeTabViewState extends State<HomeTabView> {
                   child: ListView.builder(
                     scrollDirection: Axis.horizontal,
                     itemBuilder: (context, index) =>
-                        BrandItemWidget(brand: brands![index]),
+                        BrandItemWidget(brand: brands?[index] ?? Brand()),
                     itemCount: brands?.length,
                   ),
                 ),
               ),
               SliverToBoxAdapter(
-                child: Container(
-                  height: h * 0.3,
-                  child: ListView.builder(
-                    scrollDirection: Axis.horizontal,
-                    padding: EdgeInsets.zero,
-                    itemBuilder: (context, index) => ProductItemWidget(
-                        product: state.filteredProducts!.isEmpty
-                            ? products![index]
-                            : state.filteredProducts![index]),
-                    itemCount: state.filteredProducts!.isEmpty
-                        ? state.products?.length
-                        : state.filteredProducts?.length,
-                  ),
+                child: InfoWidget(
+                  builder: (context, deviceInfo) {
+                    return Container(
+                      height: deviceInfo.deviceType == DeviceType.Desktop ||
+                              deviceInfo.deviceType == DeviceType.HugeDesktop
+                          ? deviceInfo.screenHeight / 2.9
+                          : deviceInfo.deviceType == DeviceType.IPad
+                              ? deviceInfo.screenHeight / 2.8
+                              : deviceInfo.deviceType == DeviceType.TallMobile
+                                  ? deviceInfo.screenHeight / 3.2
+                                  : deviceInfo.screenHeight / 3.1,
+                      child: ListView.builder(
+                        scrollDirection: Axis.horizontal,
+                        padding: EdgeInsets.zero,
+                        itemBuilder: (context, index) => ProductItemWidget(
+                            product: state.filteredProducts?.isEmpty == true
+                                ? products![index]
+                                : state.filteredProducts![index]),
+                        itemCount: state.filteredProducts!.isEmpty
+                            ? state.products?.length
+                            : state.filteredProducts?.length,
+                      ),
+                    );
+                  },
                 ),
               ),
             ],

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:trendista_e_commerce/constants.dart';
 import 'package:trendista_e_commerce/core/styles.dart';
 
 typedef Validation = String? Function(String?);
@@ -12,6 +12,8 @@ class CustomTextFormField extends StatefulWidget {
   bool isPassword;
   TextInputType keyboardType;
   int? maxLength;
+  Color? borderSideColor;
+  Widget? suffixIcon;
   CustomTextFormField({
     required this.hintText,
     required this.formFieldTitle,
@@ -20,6 +22,8 @@ class CustomTextFormField extends StatefulWidget {
     this.isPassword = false,
     required this.keyboardType,
     this.maxLength,
+    this.borderSideColor,
+    this.suffixIcon,
   });
 
   @override
@@ -38,6 +42,7 @@ class _CustomTextFormFieldState extends State<CustomTextFormField> {
 
   @override
   Widget build(BuildContext context) {
+    final w = MediaQuery.of(context).size.width;
     return Padding(
       padding: const EdgeInsets.all(8.0),
       child: Column(
@@ -46,10 +51,10 @@ class _CustomTextFormFieldState extends State<CustomTextFormField> {
           Text(
             widget.formFieldTitle,
             textAlign: TextAlign.start,
-            style: Styles.textStyle18.copyWith(color: Colors.white),
+            style: Styles.textStyle18(context).copyWith(color: Colors.white),
           ),
           SizedBox(
-            height: 7.h,
+            height: w * 0.01,
           ),
           TextFormField(
             validator: widget.validator,
@@ -63,16 +68,22 @@ class _CustomTextFormFieldState extends State<CustomTextFormField> {
                 filled: true,
                 fillColor: Colors.white,
                 hintText: widget.hintText,
-                hintStyle: Styles.textStyle16.copyWith(
+                hintStyle: Styles.textStyle16(context).copyWith(
                     color: Colors.black87, fontWeight: FontWeight.w300),
                 enabledBorder: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(15.r),
+                  borderSide: BorderSide(
+                      color: widget.borderSideColor ?? kPrimaryColor),
+                  borderRadius: BorderRadius.circular(15),
                 ),
                 focusedBorder: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(15.r),
+                  borderSide: BorderSide(
+                      color: widget.borderSideColor ?? kPrimaryColor),
+                  borderRadius: BorderRadius.circular(15),
                 ),
                 errorBorder: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(15.r),
+                  borderSide: BorderSide(
+                      color: widget.borderSideColor ?? kPrimaryColor),
+                  borderRadius: BorderRadius.circular(15),
                 ),
                 suffixIcon: widget.isPassword
                     ? IconButton(
@@ -82,11 +93,12 @@ class _CustomTextFormFieldState extends State<CustomTextFormField> {
                           });
                         },
                         icon: Icon(
+                          size: w * 0.03,
                           _obscureText
                               ? Icons.visibility_off
                               : Icons.visibility,
                         ))
-                    : null),
+                    : widget.suffixIcon),
           ),
         ],
       ),
