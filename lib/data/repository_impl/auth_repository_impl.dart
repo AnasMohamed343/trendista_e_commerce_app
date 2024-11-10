@@ -37,10 +37,10 @@ class AuthRepositoryImpl extends AuthRepository {
       return Right(error);
     });
   }
-
-  @override
-  Future getProfileData() async {
-    var result = await authDataSource.getProfileData();
-    return result;
-  }
+  //
+  // @override
+  // Future getProfileData() async {
+  //   var result = await authDataSource.getProfileData();
+  //   return result;
+  // }
 }

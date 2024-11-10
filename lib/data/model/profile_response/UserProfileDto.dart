@@ -12,14 +12,29 @@ class UserProfileDto {
     this.token,
   });
 
+  // UserProfileDto.fromJson(dynamic json) {
+  //   id = json['id'].toInt();
+  //   //id = json['id'] is int ? json['id'] : (json['id'] as double).toInt();
+  //   name = json['name'];
+  //   email = json['email'];
+  //   phone = json['phone'];
+  //   image = json['image'].toString();
+  //   points = json['points'];
+  //   credit = json['credit'];
+  //   token = json['token'];
+  // }
   UserProfileDto.fromJson(dynamic json) {
-    id = json['id'];
+    id = json['id'] is int ? json['id'] : (json['id'] as double?)?.toInt();
     name = json['name'];
     email = json['email'];
     phone = json['phone'];
-    image = json['image'];
-    points = json['points'];
-    credit = json['credit'];
+    image = json['image'].toString();
+    points = json['points'] is int
+        ? json['points']
+        : (json['points'] as double?)?.toInt();
+    credit = json['credit'] is int
+        ? json['credit']
+        : (json['credit'] as double?)?.toInt();
     token = json['token'];
   }
   int? id;

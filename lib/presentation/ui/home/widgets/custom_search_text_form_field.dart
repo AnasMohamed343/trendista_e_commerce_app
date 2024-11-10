@@ -19,10 +19,11 @@ class CustomSearchTextField extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final w = MediaQuery.of(context).size.width;
     return Container(
-      height: 50.h,
-      width: double.infinity,
-      margin: const EdgeInsets.symmetric(horizontal: 15, vertical: 15),
+      height: w * 0.11,
+      width: w,
+      margin: EdgeInsets.symmetric(horizontal: w * 0.03, vertical: w * 0.03),
       child: TextField(
         onSubmitted: onSubmitted,
         onChanged: onChanged,
@@ -36,9 +37,10 @@ class CustomSearchTextField extends StatelessWidget {
             onPressed: () {
               onSubmitted!(_controller.text);
             },
-            icon: const Icon(
+            icon: Icon(
               Icons.search,
               color: kSecondaryColor,
+              size: w * 0.05,
             ),
           ),
           border: OutlineInputBorder(
@@ -57,7 +59,8 @@ class CustomSearchTextField extends StatelessWidget {
             borderRadius: BorderRadius.circular(20),
             borderSide: const BorderSide(color: kBorderColor),
           ),
-          hintStyle: Styles.textStyle14.copyWith(color: Colors.black26),
+          hintStyle:
+              Styles.textStyle16(context).copyWith(color: Colors.black26),
         ),
       ),
     );

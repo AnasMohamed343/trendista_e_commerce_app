@@ -2,13 +2,13 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:lottie/lottie.dart';
 import 'package:provider/provider.dart';
 import 'package:trendista_e_commerce/constants.dart';
 import 'package:trendista_e_commerce/core/styles.dart';
 import 'package:trendista_e_commerce/di/di.dart';
-import 'package:trendista_e_commerce/presentation/ui/details_screen/product_details_vm.dart';
+import 'package:trendista_e_commerce/domain/entities/cartitem_entity.dart';
+import 'package:trendista_e_commerce/presentation/ui/product_details_screen/product_details_vm.dart';
 import 'package:trendista_e_commerce/presentation/ui/home/tabs/carts/cart_vm.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:trendista_e_commerce/presentation/ui/home/tabs/favorite_tab/favorite_tab_vm.dart';
@@ -31,7 +31,7 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen>
   final pageController = PageController();
 
   late final ProductDetailsVM detailsViewModel;
-  late final CartVM cartViewModel;
+  //late final CartVM cartViewModel;
   //late final FavoriteTabVM favViewModel;
 
   @override
@@ -41,7 +41,7 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen>
     _controller.repeat(period: const Duration(seconds: 3));
     detailsViewModel = context.read<ProductDetailsVM>()
       ..initPage(widget.productId);
-    cartViewModel = context.read<CartVM>();
+    //cartViewModel = context.read<CartVM>();
     //favViewModel = context.read<FavoriteTabVM>();
   }
 
@@ -53,6 +53,8 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen>
 
   @override
   Widget build(BuildContext context) {
+    final w = MediaQuery.of(context).size.width;
+    final h = MediaQuery.of(context).size.height;
     // final detailsViewModel = context.read<ProductDetailsVM>()
     //   ..initPage(widget.productId);
     // final cartViewModel = context.read<CartVM>();
@@ -62,12 +64,21 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen>
       backgroundColor: Colors.white,
       appBar: AppBar(
         backgroundColor: Colors.white,
-        title: const Text('Product Details'),
+        title: Text(
+          'Product Details',
+          style: Styles.textStyle20(context).copyWith(
+            color: kSecondaryColor,
+            fontSize: w * 0.050,
+          ),
+        ),
         centerTitle: true,
         actions: [
           Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 22),
+            padding: EdgeInsets.symmetric(horizontal: w * 0.03),
             child: CustomFavoriteIconButton(
+              radius: w * 0.05,
+              width: w * 0.08,
+              height: w * 0.08,
               productId: widget.productId.toString(), // Pass product ID
               // onToggleFavorite: (productId) {
               //   setState(() {
@@ -80,15 +91,19 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen>
       ),
       body: BlocBuilder<ProductDetailsVM, ProductDetailsState>(
         builder: (context, state) {
+          final cartProvider = Provider.of<CartVM>(context);
           print('Current State: $state');
           if (state is LoadingState) {
             return Center(
               child: Lottie.network(
                   'https://lottie.host/f45c9991-322a-4fe7-bf28-1b08fcb62e6c/xBEyXbOlwu.json',
-                  width: 240,
-                  height: 240,
+                  width: w * 0.4,
+                  height: h * 0.4,
                   repeat: true, errorBuilder: (context, error, stackTrace) {
-                return const Icon(Icons.error_outline);
+                return Icon(
+                  Icons.error_outline,
+                  size: w * 0.4,
+                );
               }, controller: _controller),
               //const SizedBox(width: 8),
               //Text(state.message),
@@ -103,12 +118,25 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen>
                     onPressed: () {
                       detailsViewModel.initPage(widget.productId);
                     },
-                    child: const Text('Try Again'),
+                    child: Text(
+                      'Try Again',
+                      style: Styles.textStyle20(context),
+                    ),
                   ),
                 ],
               ),
             );
           } else if (state is SuccessState) {
+            final cartItem = cartProvider.cartItems != null &&
+                    cartProvider.cartItems!.isNotEmpty
+                ? cartProvider.cartItems!.firstWhere(
+                    (item) => item.product?.id == widget.productId,
+                    orElse: () => CartItemEntity(
+                        product: null,
+                        quantity:
+                            0), // Return a default CartItemEntity if not found
+                  )
+                : CartItemEntity(product: null, quantity: 0);
             return Stack(
               children: [
                 SingleChildScrollView(
@@ -117,8 +145,8 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen>
                     mainAxisAlignment: MainAxisAlignment.start,
                     children: [
                       SizedBox(
-                        height: ScreenUtil().setHeight(360),
-                        width: double.infinity,
+                        height: h * 0.4,
+                        width: w,
                         child: Stack(
                           alignment: Alignment.bottomCenter,
                           children: [
@@ -131,15 +159,15 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen>
                               itemBuilder: (context, index) {
                                 return Image.network(
                                   state.productDetails?.images?[index] ?? '',
-                                  fit: BoxFit.contain,
+                                  fit: BoxFit.fill,
                                 );
                               },
                             ),
                             Positioned(
-                              bottom: 7,
+                              bottom: h * 0.01,
                               child: CustomPageIndicator(
-                                dotHeight: 5,
-                                dotWidth: 5,
+                                dotHeight: h * 0.01,
+                                dotWidth: w * 0.02,
                                 controller: pageController,
                                 count:
                                     state.productDetails?.images?.length ?? 0,
@@ -148,21 +176,21 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen>
                           ],
                         ),
                       ),
-                      const SizedBox(height: 10),
+                      SizedBox(height: h * 0.02),
                       Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 15),
+                        padding: EdgeInsets.symmetric(horizontal: w * 0.02),
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Row(
                               children: [
                                 SizedBox(
-                                  width: ScreenUtil().setWidth(250),
+                                  width: w * 0.6,
                                   child: Text(
                                     state.productDetails?.name ?? '',
                                     maxLines: 1,
                                     overflow: TextOverflow.ellipsis,
-                                    style: Styles.textStyle20.copyWith(
+                                    style: Styles.textStyle20(context).copyWith(
                                       fontWeight: FontWeight.bold,
                                     ),
                                   ),
@@ -170,26 +198,28 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen>
                                 const Spacer(),
                                 Text(
                                   'EGP ${state.productDetails?.price}',
-                                  style: Styles.textStyle18.copyWith(
+                                  style: Styles.textStyle18(context).copyWith(
                                     fontWeight: FontWeight.bold,
                                   ),
                                 ),
                               ],
                             ),
-                            const SizedBox(height: 10),
+                            SizedBox(height: h * 0.01),
                             Row(
                               children: [
                                 Row(
                                   children: [
                                     Text(
                                       'Discount: ',
-                                      style: Styles.textStyle16.copyWith(
+                                      style:
+                                          Styles.textStyle16(context).copyWith(
                                         color: Colors.black,
                                       ),
                                     ),
                                     Text(
                                       '${state.productDetails?.discount} % off',
-                                      style: Styles.textStyle16.copyWith(
+                                      style:
+                                          Styles.textStyle16(context).copyWith(
                                         color: Colors.black,
                                         fontWeight: FontWeight.w400,
                                       ),
@@ -198,8 +228,8 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen>
                                 ),
                                 const Spacer(),
                                 Container(
-                                  height: ScreenUtil().setHeight(45),
-                                  width: ScreenUtil().setWidth(150),
+                                  height: h * 0.05,
+                                  width: w * 0.3,
                                   decoration: BoxDecoration(
                                     borderRadius: BorderRadius.circular(18),
                                     color: kPrimaryColor,
@@ -266,42 +296,46 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen>
                                     children: [
                                       IconButton(
                                         onPressed: () {
-                                          int currentQuantity = detailsViewModel
-                                                      .productQuantities[
-                                                  widget.productId] ??
-                                              1;
-                                          if (currentQuantity > 1) {
-                                            detailsViewModel.updateQuantity(
-                                                widget.productId,
-                                                currentQuantity - 1);
+                                          int? quantity = cartItem.quantity;
+                                          // int currentQuantity = detailsViewModel
+                                          //             .productQuantities[
+                                          //         widget.productId] ??
+                                          //     1;
+                                          if (quantity! > 1) {
+                                            cartProvider.updateCartQuantity(
+                                                cartItem.id ?? 0,
+                                                (quantity - 1).toString());
                                           }
                                         },
-                                        icon: const Icon(
-                                            Icons.remove_circle_outline,
-                                            size: 22,
+                                        icon: Icon(Icons.remove_circle_outline,
+                                            size: w * 0.05,
                                             color: Colors.white),
                                       ),
                                       Text(
-                                        detailsViewModel.productQuantities[
-                                                    widget.productId]
-                                                ?.toString() ??
-                                            '1',
-                                        style: const TextStyle(
-                                            color: Colors.white, fontSize: 18),
+                                        // detailsViewModel.productQuantities[
+                                        //             widget.productId]
+                                        //         ?.toString() ??
+                                        //     '1',
+                                        '${cartItem.quantity}',
+                                        style: Styles.textStyle18(context)
+                                            .copyWith(
+                                          color: Colors.white,
+                                        ),
                                       ),
                                       IconButton(
                                         onPressed: () {
-                                          int currentQuantity = detailsViewModel
-                                                      .productQuantities[
-                                                  widget.productId] ??
-                                              1;
-                                          detailsViewModel.updateQuantity(
-                                              widget.productId,
-                                              currentQuantity + 1);
+                                          int? quantity = cartItem.quantity;
+                                          // int currentQuantity = detailsViewModel
+                                          //             .productQuantities[
+                                          //         widget.productId] ??
+                                          //     1;
+                                          cartProvider.updateCartQuantity(
+                                              cartItem.id ?? 0,
+                                              (quantity! + 1).toString());
                                         },
-                                        icon: const Icon(
+                                        icon: Icon(
                                             Icons.add_circle_outline_outlined,
-                                            size: 22,
+                                            size: w * 0.05,
                                             color: Colors.white),
                                       ),
                                     ],
@@ -309,28 +343,35 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen>
                                 ),
                               ],
                             ),
-                            const SizedBox(height: 10),
+                            SizedBox(height: h * 0.01),
                             Text(
                               'Description',
-                              style: Styles.textStyle18.copyWith(
+                              style: Styles.textStyle18(context).copyWith(
                                 fontWeight: FontWeight.bold,
                               ),
                             ),
-                            const SizedBox(height: 10),
-                            Text(
-                              state.productDetails?.description ?? '',
-                              maxLines: showFullDescription ? null : 6,
-                              overflow: showFullDescription
-                                  ? null
-                                  : TextOverflow.ellipsis,
-                              textAlign: TextAlign.justify,
-                              softWrap: true,
-                              textDirection: TextDirection.ltr,
-                              textScaleFactor: 1.0,
-                              textWidthBasis: TextWidthBasis.parent,
-                              style: Styles.textStyle16.copyWith(
-                                color: Colors.black,
-                                fontWeight: FontWeight.w400,
+                            SizedBox(height: h * 0.01),
+                            GestureDetector(
+                              onDoubleTap: () {
+                                setState(() {
+                                  showFullDescription = !showFullDescription;
+                                });
+                              },
+                              child: Text(
+                                state.productDetails?.description ?? '',
+                                maxLines: showFullDescription ? null : 7,
+                                overflow: showFullDescription
+                                    ? null
+                                    : TextOverflow.ellipsis,
+                                textAlign: TextAlign.justify,
+                                softWrap: true,
+                                textDirection: TextDirection.ltr,
+                                textScaleFactor: 1.0,
+                                textWidthBasis: TextWidthBasis.parent,
+                                style: Styles.textStyle16(context).copyWith(
+                                  color: Colors.black,
+                                  fontWeight: FontWeight.w400,
+                                ),
                               ),
                             ),
                             if (state.productDetails?.description != null &&
@@ -342,16 +383,17 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen>
                                   });
                                 },
                                 child: Padding(
-                                  padding: const EdgeInsets.only(top: 8.0),
+                                  padding: EdgeInsets.only(top: h * 0.01),
                                   child: Text(
                                     showFullDescription
                                         ? 'Read Less'
                                         : '..Read More',
-                                    style: const TextStyle(color: Colors.blue),
+                                    style: Styles.textStyle18(context)
+                                        .copyWith(color: Colors.blue),
                                   ),
                                 ),
                               ),
-                            SizedBox(height: 115.h),
+                            SizedBox(height: h * 0.1),
                           ],
                         ),
                       ),
@@ -361,7 +403,7 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen>
                 Align(
                   alignment: Alignment.bottomCenter,
                   child: Container(
-                    height: ScreenUtil().setHeight(110),
+                    height: h * 0.1,
                     color: Colors.white,
                     width: double.infinity,
                     child: Padding(
@@ -375,42 +417,44 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen>
                             children: [
                               Text(
                                 'Total Price',
-                                style: Styles.textStyle16.copyWith(
+                                style: Styles.textStyle16(context).copyWith(
                                   color: Colors.black54,
                                   fontWeight: FontWeight.w500,
                                 ),
                               ),
-                              const SizedBox(
-                                height: 5,
+                              SizedBox(
+                                height: h * 0.005,
                               ),
                               Text(
-                                'EGP ${state.totalPrice}', //'EGP ${state.productDetails?.price ?? 0 * cartViewModel.getQuantity(state.productDetails?.id.toString() ?? '')}',
-                                style: Styles.textStyle16.copyWith(
+                                'EGP ${detailsViewModel.calculateTotalPrice(cartItem.product?.id ?? 0, cartItem?.quantity ?? 0)}', //'EGP ${state.productDetails?.price ?? 0 * cartViewModel.getQuantity(state.productDetails?.id.toString() ?? '')}',
+                                style: Styles.textStyle16(context).copyWith(
                                   color: Colors.black,
                                 ),
                               ),
                             ],
                           ),
-                          const SizedBox(
-                            width: 50,
+                          SizedBox(
+                            width: w * 0.05,
                           ),
                           Expanded(
                             child: InkWell(
                               onTap: () {
                                 String productId =
                                     state.productDetails?.id.toString() ?? '';
+
                                 int selectedQuantity =
                                     detailsViewModel.productQuantities[
                                             state.productDetails?.id] ??
                                         1;
 
                                 // Only add or update cart when "Add To Cart" is pressed
-                                if (cartViewModel.isAddedToCart(productId)) {
+                                if (cartProvider.isAddedToCart(productId)) {
                                   // Product is already in the cart, update its quantity
-                                  cartViewModel.updateCartQuantity(
-                                      productId, selectedQuantity);
-                                  detailsViewModel.clearQuantity(
-                                      state.productDetails?.id ?? 0);
+                                  cartProvider.updateCartQuantity(
+                                      int.parse(productId),
+                                      selectedQuantity.toString());
+                                  // detailsViewModel.clearQuantity(
+                                  //     state.productDetails?.id ?? 0);
                                   Fluttertoast.showToast(
                                     msg: 'Cart Quantity Updated',
                                     toastLength: Toast.LENGTH_SHORT,
@@ -418,15 +462,16 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen>
                                     timeInSecForIosWeb: 1,
                                     backgroundColor: Colors.green,
                                     textColor: Colors.white,
-                                    fontSize: 16.0,
+                                    fontSize: w * 0.02,
                                   );
                                 } else {
                                   // Product is not in the cart, add it with the selected quantity
-                                  cartViewModel.addOrRemoveCart(productId);
-                                  cartViewModel.updateCartQuantity(
-                                      productId, selectedQuantity);
-                                  detailsViewModel.clearQuantity(
-                                      state.productDetails?.id ?? 0);
+                                  cartProvider.addOrRemoveCart(productId);
+                                  cartProvider.updateCartQuantity(
+                                      int.parse(productId),
+                                      selectedQuantity.toString());
+                                  // detailsViewModel.clearQuantity(
+                                  //     state.productDetails?.id ?? 0);
                                   Fluttertoast.showToast(
                                     msg: 'Added to Cart',
                                     toastLength: Toast.LENGTH_SHORT,
@@ -434,25 +479,25 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen>
                                     timeInSecForIosWeb: 1,
                                     backgroundColor: Colors.green,
                                     textColor: Colors.white,
-                                    fontSize: 16.0,
+                                    fontSize: w * 0.02,
                                   );
                                 }
                               },
                               child: Container(
-                                height: 60.h,
-                                width: 120.w,
+                                height: h * 0.05,
+                                width: w * 0.4,
                                 decoration: BoxDecoration(
                                   borderRadius: BorderRadius.circular(18),
                                   color: kPrimaryColor,
                                 ),
-                                child: const Row(
+                                child: Row(
                                   mainAxisAlignment: MainAxisAlignment.center,
                                   children: [
                                     Icon(Icons.add_shopping_cart_outlined,
-                                        color: Colors.white, size: 20),
-                                    SizedBox(width: 20),
+                                        color: Colors.white, size: w * 0.04),
+                                    SizedBox(width: w * 0.02),
                                     Text('Add To Cart',
-                                        style: Styles.textStyle16),
+                                        style: Styles.textStyle16(context)),
                                   ],
                                 ),
                               ),

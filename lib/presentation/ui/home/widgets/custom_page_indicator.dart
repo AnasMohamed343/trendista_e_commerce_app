@@ -11,18 +11,19 @@ class CustomPageIndicator extends StatelessWidget {
       {super.key,
       required this.controller,
       required this.count,
-      this.dotWidth = 10,
-      this.dotHeight = 2});
+      this.dotWidth = 6,
+      this.dotHeight = 6});
 
   @override
   Widget build(BuildContext context) {
+    final w = MediaQuery.of(context).size.width;
     return SmoothPageIndicator(
       controller: controller,
       count: count,
       axisDirection: Axis.horizontal,
       effect: SlideEffect(
           spacing: 8.0,
-          radius: 30,
+          radius: w * 0.03,
           dotWidth: dotWidth,
           dotHeight: dotHeight,
           paintStyle: PaintingStyle.stroke,

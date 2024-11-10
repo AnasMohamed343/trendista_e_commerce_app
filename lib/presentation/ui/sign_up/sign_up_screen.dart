@@ -197,7 +197,8 @@ class _SignUpScreenState extends State<SignUpScreen> {
                     },
                     child: Text(
                       "Already have an account? Login",
-                      style: Styles.textStyle18.copyWith(color: Colors.white),
+                      style: Styles.textStyle18(context)
+                          .copyWith(color: Colors.white),
                       textAlign: TextAlign.center,
                     ),
                   ),

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:trendista_e_commerce/constants.dart';
+import 'package:trendista_e_commerce/core/styles.dart';
 
 class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
   String appbarTitle;
@@ -16,8 +17,8 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
       centerTitle: true,
       title: Text(
         appbarTitle,
-        style: const TextStyle(
-            color: kPrimaryColor, fontSize: 19, fontWeight: FontWeight.bold),
+        style: Styles.textStyle20(context)
+            .copyWith(color: kPrimaryColor, fontWeight: FontWeight.bold),
       ),
     );
   }

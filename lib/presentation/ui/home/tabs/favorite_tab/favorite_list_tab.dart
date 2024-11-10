@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:lottie/lottie.dart';
 import 'package:provider/provider.dart';
+import 'package:trendista_e_commerce/core/styles.dart';
+import 'package:trendista_e_commerce/core/utils/assets_manager.dart';
 import 'package:trendista_e_commerce/domain/entities/Product.dart';
-import 'package:trendista_e_commerce/presentation/ui/details_screen/product_details_screen.dart';
+import 'package:trendista_e_commerce/presentation/ui/product_details_screen/product_details_screen.dart';
 import 'package:trendista_e_commerce/presentation/ui/home/tabs/carts/cart_vm.dart';
 import 'package:trendista_e_commerce/presentation/ui/home/tabs/favorite_tab/custom_fav_item.dart';
 import 'package:trendista_e_commerce/presentation/ui/home/widgets/custom_fav_icon_button.dart';
@@ -37,6 +38,8 @@ class _FavoriteListTabState extends State<FavoriteListTab>
 
   @override
   Widget build(BuildContext context) {
+    double w = MediaQuery.of(context).size.width;
+    double h = MediaQuery.of(context).size.height;
     return Scaffold(
       backgroundColor: Colors.white,
       body: Consumer<FavoriteProvider>(
@@ -47,8 +50,8 @@ class _FavoriteListTabState extends State<FavoriteListTab>
                 'https://lottie.host/0f1086d9-3279-43d0-af72-7e54dfb1fb05/HjcfZ57lor.json',
                 repeat: true,
                 backgroundLoading: true,
-                width: 220,
-                height: 220,
+                width: w * 0.6,
+                height: h * 0.6,
                 frameRate: const FrameRate(60),
                 controller: _controller,
                 errorBuilder: (context, error, stackTrace) {
@@ -58,13 +61,18 @@ class _FavoriteListTabState extends State<FavoriteListTab>
               ),
             );
           } else if (favoriteProvider.favoriteProducts.isEmpty) {
-            return const Center(
-              child: Text(
-                'No favorites yet',
-                style: TextStyle(
-                  fontSize: 20,
-                  fontWeight: FontWeight.bold,
-                ),
+            return Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  SvgPicture.asset(
+                    AssetsManager.noFavoritesYet,
+                    height: h * 0.7,
+                    width: w * 0.7,
+                  ),
+                  SizedBox(height: h * 0.02),
+                  Text('No favorites yet', style: Styles.textStyle20(context)),
+                ],
               ),
             );
           } else {

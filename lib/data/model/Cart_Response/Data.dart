@@ -1,4 +1,4 @@
-import 'CartItems.dart';
+import 'CartItemsDto.dart';
 
 class Data {
   Data({
@@ -11,17 +11,17 @@ class Data {
     if (json['cart_items'] != null) {
       cartItems = [];
       json['cart_items'].forEach((v) {
-        cartItems?.add(CartItems.fromJson(v));
+        cartItems?.add(CartItemsDto.fromJson(v));
       });
     }
     subTotal = json['sub_total'] != null ? json['sub_total'].toInt() : 0;
     total = json['total'] != null ? json['total'].toInt() : 0;
   }
-  List<CartItems>? cartItems;
+  List<CartItemsDto>? cartItems;
   int? subTotal;
   int? total;
   Data copyWith({
-    List<CartItems>? cartItems,
+    List<CartItemsDto>? cartItems,
     int? subTotal,
     int? total,
   }) =>

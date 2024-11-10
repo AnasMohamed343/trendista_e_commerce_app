@@ -13,7 +13,7 @@ import 'category_tab_vm.dart';
 import 'category_tab_widget.dart';
 
 class CategoryTab extends StatefulWidget {
-  List<Category>? categories; // Change the type to List<Category>?
+  List<Category>? categories;
   CategoryTab({this.categories});
 
   @override
@@ -40,6 +40,8 @@ class _CategoryTabState extends State<CategoryTab>
 
   @override
   Widget build(BuildContext context) {
+    double h = MediaQuery.of(context).size.height;
+    double w = MediaQuery.of(context).size.width;
     return Scaffold(
       backgroundColor: Colors.white,
       //appBar: CustomAppBar(appbarTitle: 'Categories'),
@@ -53,8 +55,8 @@ class _CategoryTabState extends State<CategoryTab>
                   return Center(
                     child: Lottie.network(
                         'https://lottie.host/f45c9991-322a-4fe7-bf28-1b08fcb62e6c/xBEyXbOlwu.json',
-                        width: 240,
-                        height: 240,
+                        width: w * 0.6,
+                        height: h * 0.6,
                         repeat: true,
                         errorBuilder: (context, error, stackTrace) {
                       return const Icon(Icons.error_outline);
@@ -79,18 +81,7 @@ class _CategoryTabState extends State<CategoryTab>
                 }
               case SuccessState():
                 {
-                  if (widget.categories != null) {
-                    return GridView.builder(
-                      itemCount: widget.categories?.length,
-                      gridDelegate:
-                          const SliverGridDelegateWithFixedCrossAxisCount(
-                              crossAxisCount: 2),
-                      itemBuilder: (context, index) {
-                        return CategoryTabWidget(
-                            category: widget.categories![index]);
-                      },
-                    );
-                  } else {
+                  if (state.categories != null) {
                     return Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
@@ -108,8 +99,8 @@ class _CategoryTabState extends State<CategoryTab>
                         //     ),
                         //   ],
                         // ),
-                        const SizedBox(
-                          height: 20,
+                        SizedBox(
+                          height: h * 0.04,
                         ),
                         Expanded(
                           child: GridView.builder(
@@ -126,6 +117,8 @@ class _CategoryTabState extends State<CategoryTab>
                       ],
                     );
                   }
+
+                  return Container();
                 }
             }
           }),

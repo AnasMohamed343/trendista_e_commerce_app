@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:lottie/lottie.dart';
+import 'package:trendista_e_commerce/core/enums/device_type.dart';
+import 'package:trendista_e_commerce/core/ui_components/info_widget.dart';
 import 'package:trendista_e_commerce/di/di.dart';
 import 'package:trendista_e_commerce/domain/entities/Product.dart';
 //import 'package:trendista_e_commerce/domain/entities/route_e-commerce/Category.dart';
@@ -39,6 +41,8 @@ class _ProductsTabState extends State<ProductsTab>
 
   @override
   Widget build(BuildContext context) {
+    double h = MediaQuery.of(context).size.height;
+    double w = MediaQuery.of(context).size.width;
     return Scaffold(
         backgroundColor: Colors.white,
         appBar: AppBar(
@@ -54,8 +58,8 @@ class _ProductsTabState extends State<ProductsTab>
                     return Center(
                       child: Lottie.network(
                           'https://lottie.host/f45c9991-322a-4fe7-bf28-1b08fcb62e6c/xBEyXbOlwu.json',
-                          width: 240,
-                          height: 240,
+                          width: w * 0.6,
+                          height: h * 0.6,
                           repeat: true,
                           errorBuilder: (context, error, stackTrace) {
                         return const Icon(Icons.error_outline);
@@ -80,19 +84,31 @@ class _ProductsTabState extends State<ProductsTab>
                   }
                 case SuccessState():
                   {
-                    return GridView.builder(
-                      itemCount: state.products?.length,
-                      gridDelegate:
-                          const SliverGridDelegateWithFixedCrossAxisCount(
-                              childAspectRatio: 8 / 9.5,
-                              crossAxisCount: 2,
-                              mainAxisSpacing: 12),
-                      itemBuilder: (context, index) {
-                        return ProductItemWidget(
-                          product: state.products?[index] ?? Product(),
-                        );
-                      },
-                    );
+                    return InfoWidget(builder: (context, deviceInfo) {
+                      double h = deviceInfo.screenHeight;
+                      double w = deviceInfo.screenWidth;
+                      return GridView.builder(
+                        itemCount: state.products?.length,
+                        padding: EdgeInsets.zero,
+                        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                            childAspectRatio:
+                                deviceInfo.deviceType == DeviceType.Desktop
+                                    ? w * 0.00099
+                                    : deviceInfo.deviceType == DeviceType.Tablet
+                                        ? w * 0.0012
+                                        : deviceInfo.deviceType ==
+                                                DeviceType.HugeDesktop
+                                            ? w * 0.0008
+                                            : w * 0.0018,
+                            crossAxisCount: 2,
+                            mainAxisSpacing: 0.0),
+                        itemBuilder: (context, index) {
+                          return ProductItemWidget(
+                            product: state.products?[index] ?? Product(),
+                          );
+                        },
+                      );
+                    });
                   }
               }
             }));

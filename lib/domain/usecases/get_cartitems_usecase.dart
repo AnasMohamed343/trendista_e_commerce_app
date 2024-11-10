@@ -1,5 +1,6 @@
 import 'package:injectable/injectable.dart';
 import 'package:trendista_e_commerce/domain/entities/Product.dart';
+import 'package:trendista_e_commerce/domain/entities/cartitem_entity.dart';
 import 'package:trendista_e_commerce/domain/repository/cart_repository.dart';
 
 @injectable
@@ -11,7 +12,11 @@ class GetCartItemsUseCase {
   @factoryMethod
   GetCartItemsUseCase({required this.cartRepository});
 
-  Future<List<Product>?> invoke() {
+  // Future<List<Product>?> invoke() {
+  //   return cartRepository.getCart();
+  // }
+
+  Future<List<CartItemEntity>?> invoke() {
     return cartRepository.getCart();
   }
 
@@ -23,7 +28,7 @@ class GetCartItemsUseCase {
     return cartRepository.addOrRemoveCart(productId);
   }
 
-  Future updateCartQuantity(String productId) {
-    return cartRepository.updateCartQuantity(productId);
+  Future updateCartQuantity(int cartItemId, String quantity) {
+    return cartRepository.updateCartQuantity(cartItemId, quantity);
   }
 }

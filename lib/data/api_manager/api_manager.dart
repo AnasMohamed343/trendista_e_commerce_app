@@ -5,13 +5,17 @@ import 'package:injectable/injectable.dart';
 import 'package:trendista_e_commerce/constants.dart';
 import 'package:trendista_e_commerce/core/local/prefs_helper.dart';
 import 'package:trendista_e_commerce/data/model/Cart_Response/CartResponse.dart';
+import 'package:trendista_e_commerce/data/model/add_order_response/AddOrderResponse.dart';
 import 'package:trendista_e_commerce/data/model/auth_response/AuthResponse.dart';
 import 'package:trendista_e_commerce/data/model/auth_response/route_auth/AuthResponse.dart';
 import 'package:trendista_e_commerce/data/model/banners_response/BannerResponse.dart';
 import 'package:trendista_e_commerce/data/model/brands_response/BrandsResponse.dart';
 import 'package:trendista_e_commerce/data/model/favorite_response/FavoriteResponse.dart';
+import 'package:trendista_e_commerce/data/model/order_details_response/OrderDetailsResponse.dart';
+import 'package:trendista_e_commerce/data/model/orders_response/OrderResponse.dart';
 import 'package:trendista_e_commerce/data/model/product_details_response/ProductDetailsResponse.dart';
 import 'package:trendista_e_commerce/data/model/products_response/ProductResponse.dart';
+import 'package:trendista_e_commerce/data/model/profile_response/ProfileResponse.dart';
 //import 'package:trendista_e_commerce/data/model/categories_response/route_e-commercce/CategoriesResponse.dart';
 //import 'package:trendista_e_commerce/data/model/products_response/route_e-commerce/ProductsResponse.dart';
 import 'package:trendista_e_commerce/domain/repository/products_repository.dart';
@@ -123,9 +127,12 @@ class ApiManager {
     return CartResponse.fromJson(json);
   }
 
-  Future<CartResponse> updateCartQuantity({required String productId}) async {
-    var url = Uri.https(baseUrlVal, '/api/carts/$productId');
-    var response = await http.put(url, headers: {
+  Future<CartResponse> updateCartQuantity(
+      {required int cartItemId, required String quantity}) async {
+    var url = Uri.https(baseUrlVal, '/api/carts/$cartItemId');
+    var response = await http.put(url, body: {
+      "quantity": quantity,
+    }, headers: {
       'lang': 'en',
       'Authorization': myToken,
     });
@@ -182,15 +189,94 @@ class ApiManager {
     return authResponse;
   }
 
-  Future<AuthResponse> getProfileData() async {
+  // Future<AuthResponse> getProfileData() async {
+  //   var url = Uri.https(baseUrlVal, '/api/profile');
+  //   var response = await http.get(url, headers: {
+  //     'lang': 'en',
+  //     'Authorization': myToken,
+  //   });
+  //   var json = jsonDecode(response.body);
+  //   AuthResponse authResponse = AuthResponse.fromJson(json);
+  //   return authResponse;
+  // }
+  Future<ProfileResponse> getProfileData() async {
     var url = Uri.https(baseUrlVal, '/api/profile');
     var response = await http.get(url, headers: {
       'lang': 'en',
       'Authorization': myToken,
     });
     var json = jsonDecode(response.body);
-    AuthResponse authResponse = AuthResponse.fromJson(json);
-    return authResponse;
+    ProfileResponse profileResponse = ProfileResponse.fromJson(json);
+    return profileResponse;
+  }
+
+  Future<ProfileResponse> updateProfileData({
+    required String name,
+    required String email,
+    required String mobileNumber,
+    required String image,
+  }) async {
+    var url = Uri.https(baseUrlVal, '/api/update-profile');
+    var response = await http.put(url, headers: {
+      'lang': 'en',
+      'Authorization': myToken,
+    }, body: {
+      "name": name,
+      "email": email,
+      "phone": mobileNumber,
+      "image": image
+    });
+    var json = jsonDecode(response.body);
+    ProfileResponse profileResponse = ProfileResponse.fromJson(json);
+    return profileResponse;
+  }
+
+  Future<OrderResponse> getOrders() async {
+    var url = Uri.https(baseUrlVal, '/api/orders');
+    var response = await http.get(url, headers: {
+      'lang': 'en',
+      'Authorization': myToken,
+    });
+    var json = jsonDecode(response.body);
+    OrderResponse orderResponse = OrderResponse.fromJson(json);
+    return orderResponse;
+  }
+
+  Future<OrderResponse> addOrder() async {
+    var url = Uri.https(baseUrlVal, '/api/orders');
+    var response = await http.post(url, body: {
+      "address_id": "35",
+      "payment_method": "1",
+      "use_points": "false"
+    }, headers: {
+      'lang': 'en',
+      'Authorization': myToken,
+    });
+    var json = jsonDecode(response.body);
+    OrderResponse orderResponse = OrderResponse.fromJson(json);
+    return orderResponse;
+  }
+
+  Future<OrderResponse> cancelOrder(int orderId) async {
+    var url = Uri.https(baseUrlVal, '/api/orders/$orderId/cancel');
+    var response = await http.get(url, headers: {
+      'Authorization': myToken,
+    });
+    var json = jsonDecode(response.body);
+    OrderResponse orderResponse = OrderResponse.fromJson(json);
+    return orderResponse;
+  }
+
+  Future<OrderDetailsResponse> getOrderDetails(int orderId) async {
+    var url = Uri.https(baseUrlVal, '/api/orders/$orderId');
+    var response = await http.get(url, headers: {
+      'lang': 'en',
+      'Authorization': myToken,
+    });
+    var json = jsonDecode(response.body);
+    OrderDetailsResponse orderDetailsResponse =
+        OrderDetailsResponse.fromJson(json);
+    return orderDetailsResponse;
   }
 }
 

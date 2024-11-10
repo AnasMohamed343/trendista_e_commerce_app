@@ -73,10 +73,11 @@ class _SignInScreenState extends State<SignInScreen> {
                   ),
                   Text(
                     'Welcome Back To Trendista',
-                    style: Styles.textStyle24.copyWith(color: Colors.white),
+                    style: Styles.textStyle24(context)
+                        .copyWith(color: Colors.white),
                   ),
-                  const Text('Please sign in with your email',
-                      style: Styles.textStyle16),
+                  Text('Please sign in with your email',
+                      style: Styles.textStyle16(context)),
                   SizedBox(
                     height: 25.h,
                   ),
@@ -105,11 +106,11 @@ class _SignInScreenState extends State<SignInScreen> {
                       return null;
                     },
                   ),
-                  const Padding(
-                    padding: EdgeInsets.only(right: 9, bottom: 10),
+                  Padding(
+                    padding: const EdgeInsets.only(right: 9, bottom: 10),
                     child: Text(
                       'Forgot Password',
-                      style: Styles.textStyle16,
+                      style: Styles.textStyle16(context),
                       textAlign: TextAlign.end,
                     ),
                   ),
@@ -177,7 +178,8 @@ class _SignInScreenState extends State<SignInScreen> {
                     },
                     child: Text(
                       "Don't have an account? Create Account",
-                      style: Styles.textStyle18.copyWith(color: Colors.white),
+                      style: Styles.textStyle18(context)
+                          .copyWith(color: Colors.white),
                       textAlign: TextAlign.center,
                     ),
                   ),

@@ -10,16 +10,33 @@ class UserProfileEntity {
     this.token,
   });
 
+  // UserProfileEntity.fromJson(dynamic json) {
+  //   id = json['id'].toInt();
+  //   //id = json['id'] is int ? json['id'] : (json['id'] as double).toInt();
+  //   name = json['name'];
+  //   email = json['email'];
+  //   phone = json['phone'];
+  //   image = json['image'].toString();
+  //   points = json['points'].toInt();
+  //   credit = json['credit'].toInt();
+  //   token = json['token'];
+  // }//i was face this error : I/flutter (23859): Error at Profile Data: type 'double' is not a subtype of type 'int?'
+  //to resolve it >  you should add type checking and casting in the UserProfileDto.fromJson method to ensure these values are converted to int if they are of type double.
   UserProfileEntity.fromJson(dynamic json) {
-    id = json['id'];
+    id = json['id'] is int ? json['id'] : (json['id'] as double?)?.toInt();
     name = json['name'];
     email = json['email'];
     phone = json['phone'];
-    image = json['image'];
-    points = json['points'];
-    credit = json['credit'];
+    image = json['image'].toString();
+    points = json['points'] is int
+        ? json['points']
+        : (json['points'] as double?)?.toInt();
+    credit = json['credit'] is int
+        ? json['credit']
+        : (json['credit'] as double?)?.toInt();
     token = json['token'];
   }
+
   int? id;
   String? name;
   String? email;

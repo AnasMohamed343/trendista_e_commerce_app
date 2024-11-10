@@ -5,7 +5,9 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:trendista_e_commerce/constants.dart';
+import 'package:trendista_e_commerce/core/enums/device_type.dart';
 import 'package:trendista_e_commerce/core/local/prefs_helper.dart';
+import 'package:trendista_e_commerce/core/ui_components/info_widget.dart';
 import 'package:trendista_e_commerce/core/utils/assets_manager.dart';
 import 'package:trendista_e_commerce/core/utils/routes_manager.dart';
 import 'package:trendista_e_commerce/domain/entities/route_e-commerce/Category.dart';
@@ -26,6 +28,7 @@ class HomeScreen extends StatelessWidget {
   List<String> tabsName = ['Trendista', 'Categories', 'Favorites', 'Profile'];
   @override
   Widget build(BuildContext context) {
+    final w = MediaQuery.of(context).size.width;
     return SafeArea(
       child: BlocBuilder<HomeScreenViewModel, HomeScreenState>(
         bloc: viewModel,
@@ -49,11 +52,12 @@ class HomeScreen extends StatelessWidget {
               //       },
               //       icon: const Icon(Icons.logout))
               // ],
+              centerTitle: true,
               backgroundColor: Colors.white,
               title: Text(tabsName[selectedIndex],
                   style: GoogleFonts.almendra(
                     textStyle: Theme.of(context).textTheme.displayLarge,
-                    fontSize: 24,
+                    fontSize: w * 0.07, //24
                     fontWeight: FontWeight.w700,
                     color: kPrimaryColor,
                     //fontStyle: FontStyle.italic,
@@ -70,73 +74,106 @@ class HomeScreen extends StatelessWidget {
                         color: Colors.black38, spreadRadius: 0, blurRadius: 10),
                   ],
                 ),
-                child: ClipRRect(
-                    borderRadius: const BorderRadius.only(
-                      topLeft: Radius.circular(30.0),
-                      topRight: Radius.circular(30.0),
-                    ),
-                    child: BottomNavigationBar(
-                        currentIndex: selectedIndex,
-                        onTap: (index) {
-                          selectedIndex = index;
-                          //setState(() {});
-                          // or can handle the tabs by bloc :
-                          viewModel.getTabs(selectedIndex);
-                        },
-                        backgroundColor: kPrimaryColor,
-                        type: BottomNavigationBarType.fixed,
-                        fixedColor: kPrimaryColor,
-                        items: [
-                          selectedIndex == 0
-                              ? const BottomNavigationBarItem(
-                                  icon: CircleAvatar(
-                                      child: ImageIcon(AssetImage(
-                                          'assets/icons/ic_home.png'))),
-                                  label: "")
-                              : const BottomNavigationBarItem(
-                                  icon: ImageIcon(
-                                      color: Colors.white,
-                                      AssetImage('assets/icons/ic_home.png')),
-                                  label: ""),
-                          selectedIndex == 1
-                              ? const BottomNavigationBarItem(
-                                  icon: CircleAvatar(
-                                    child: ImageIcon(AssetImage(
-                                        'assets/icons/ic_category.png')),
-                                  ),
-                                  label: "")
-                              : const BottomNavigationBarItem(
-                                  icon: ImageIcon(
-                                      color: Colors.white,
-                                      AssetImage(
-                                          'assets/icons/ic_category.png')),
-                                  label: ""),
-                          selectedIndex == 2
-                              ? BottomNavigationBarItem(
-                                  icon: CircleAvatar(
-                                      child: SvgPicture.asset(
-                                    AssetsManager.favIcon,
-                                    color: Colors.black,
-                                  )),
-                                  label: "")
-                              : BottomNavigationBarItem(
-                                  icon: SvgPicture.asset(
-                                    AssetsManager.favIcon,
-                                    color: Colors.white,
-                                  ),
-                                  label: ""),
-                          selectedIndex == 3
-                              ? const BottomNavigationBarItem(
-                                  icon: CircleAvatar(
-                                      child: ImageIcon(AssetImage(
-                                          'assets/icons/ic_user.png'))),
-                                  label: "")
-                              : const BottomNavigationBarItem(
-                                  icon: ImageIcon(
-                                      color: Colors.white,
-                                      AssetImage('assets/icons/ic_user.png')),
-                                  label: ""),
-                        ]))),
+                child: InfoWidget(builder: (context, deviceInfo) {
+                  double h = deviceInfo.screenHeight;
+                  double w = deviceInfo.screenWidth;
+                  return ClipRRect(
+                      borderRadius: const BorderRadius.only(
+                        topLeft: Radius.circular(30.0),
+                        topRight: Radius.circular(30.0),
+                      ),
+                      child: BottomNavigationBar(
+                          currentIndex: selectedIndex,
+                          onTap: (index) {
+                            selectedIndex = index;
+                            //setState(() {});
+                            // or can handle the tabs by bloc :
+                            viewModel.getTabs(selectedIndex);
+                          },
+                          backgroundColor: kPrimaryColor,
+                          type: BottomNavigationBarType.fixed,
+                          fixedColor: kPrimaryColor,
+                          items: [
+                            selectedIndex == 0
+                                ? BottomNavigationBarItem(
+                                    icon: CircleAvatar(
+                                        radius: deviceInfo.deviceType ==
+                                                DeviceType.TallMobile
+                                            ? w * 0.055
+                                            : w * 0.047,
+                                        child: SvgPicture.asset(
+                                            AssetsManager.homeIcon,
+                                            color: Colors.black,
+                                            height: h * 0.035,
+                                            width: w * 0.035)),
+                                    label: "")
+                                : BottomNavigationBarItem(
+                                    icon: SvgPicture.asset(
+                                        AssetsManager.homeIcon,
+                                        color: Colors.white,
+                                        height: h * 0.035,
+                                        width: w * 0.035),
+                                    label: ""),
+                            selectedIndex == 1
+                                ? BottomNavigationBarItem(
+                                    icon: CircleAvatar(
+                                        radius: deviceInfo.deviceType ==
+                                                DeviceType.TallMobile
+                                            ? w * 0.055
+                                            : w * 0.047,
+                                        child: SvgPicture.asset(
+                                            AssetsManager.categoryIcon,
+                                            height: h * 0.035,
+                                            width: w * 0.035)),
+                                    label: "")
+                                : BottomNavigationBarItem(
+                                    icon: SvgPicture.asset(
+                                        AssetsManager.categoryIcon,
+                                        color: Colors.white,
+                                        height: h * 0.035,
+                                        width: w * 0.035),
+                                    label: ""),
+                            selectedIndex == 2
+                                ? BottomNavigationBarItem(
+                                    icon: CircleAvatar(
+                                        radius: deviceInfo.deviceType ==
+                                                DeviceType.TallMobile
+                                            ? w * 0.055
+                                            : w * 0.047,
+                                        child: SvgPicture.asset(
+                                            AssetsManager.favIcon,
+                                            color: Colors.black,
+                                            height: h * 0.035,
+                                            width: w * 0.035)),
+                                    label: "")
+                                : BottomNavigationBarItem(
+                                    icon: SvgPicture.asset(
+                                        AssetsManager.favIcon,
+                                        color: Colors.white,
+                                        height: h * 0.035,
+                                        width: w * 0.035),
+                                    label: ""),
+                            selectedIndex == 3
+                                ? BottomNavigationBarItem(
+                                    icon: CircleAvatar(
+                                        radius: deviceInfo.deviceType ==
+                                                DeviceType.TallMobile
+                                            ? w * 0.055
+                                            : w * 0.047,
+                                        child: SvgPicture.asset(
+                                            AssetsManager.profileIcon,
+                                            color: Colors.black,
+                                            height: h * 0.035,
+                                            width: w * 0.035)),
+                                    label: "")
+                                : BottomNavigationBarItem(
+                                    icon: SvgPicture.asset(
+                                        AssetsManager.profileIcon,
+                                        height: h * 0.035,
+                                        width: w * 0.035),
+                                    label: ""),
+                          ]));
+                })),
             body: tabPreview,
             //tabs[selectedIndex],
             // Column(
